@@ -154,6 +154,7 @@ def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
         ylim=(0.7, 1.3))
 
     def running_mean(x, N):
+        # Thanks to https://stackoverflow.com/a/13732668
         return np.convolve(x, np.ones((N, )) / N)[(N - 1):]
 
     def runSingle(integrator):
