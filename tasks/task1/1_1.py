@@ -28,11 +28,8 @@ class Simulation():
         self.state = {"time": [], "theta": [], "dTheta": [], "energy": []}
 
     def run(self, toTime, plotSteps=10000):
-        totalStep = np.int_(ceil((toTime / self.dt) / plotSteps))
-        print("Running a simulation with {0} steps".format(totalStep))
-        while self.t < (toTime - self.dt * totalStep):
-            for _ in range(totalStep):
-                self.integrate()
+        while self.t < toTime:
+            self.integrate()
 
             self.state["time"].append(self.t)
             self.state["theta"].append(self.theta)
@@ -46,7 +43,7 @@ class Simulation():
         self.__reset()
 
         fig = plt.figure()
-        #axis = plt.subplot(xlim=(-1.2, 1.2), ylim=(-1.2, 1.2))
+        # axis = plt.subplot(xlim=(-1.2, 1.2), ylim=(-1.2, 1.2))
         axis = plt.subplot(xlim=(0, toTime), ylim=(-np.pi, np.pi))
         pendulum_line, = axis.plot([], [], lw=4)
 
@@ -78,6 +75,10 @@ c = 9
 m = 1
 g = 9.81
 L = g / c
+
+
+def harmonicAcceleration(theta):
+    return -c * theta
 
 
 def pendulumAcceleration(theta):
@@ -137,49 +138,140 @@ def rungeKutta(A, E, dt, theta, dTheta):
     return theta, dTheta, energy
 
 
-def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
-    axis = plt.subplot(
-        2,
-        totalRuns,
-        currentRun,
-        xlim=(0, timeLimit),
-        ylim=(-np.pi, np.pi),
-        title="dt={0:.2g}, θ(0)/pi={0:.1g}, θ'(0)={1:.1g}".format(
-            dt, initialTheta / np.pi, initialDTheta))
-    axis2 = plt.subplot(
-        2,
-        totalRuns,
-        totalRuns + currentRun,
-        xlim=(0, timeLimit),
-        ylim=(0.7, 1.3))
+def plotPhaseSpace(A, E, timeLimit,  dt, initialTheta, initialDTheta):
+    sim = Simulation(
+        lambda dt, theta, dTheta: velocityVerlet(
+            A, E, dt, theta, dTheta),
+        dt, initialTheta, initialDTheta)
+    time, theta, dTheta, energy = sim.run(timeLimit)
+    plt.plot(time, theta)
+
+
+def compare(initialTheta, initialDTheta, name):
+    dt = 0.001
+    time = 25
+
+    title = "dt={0: .2g}, θ(0)/pi={1: .1g}, θ'(0)={2: .1g}".format(dt,
+                                                                   initialTheta, initialDTheta)
+    print("Comparing " + title)
+    plt.figure()
+    plt.subplot(xlim=(0, time), ylim=(-1, 1))
+    plotPhaseSpace(pendulumAcceleration, pendulumEnergy,
+                   time, dt, initialTheta, initialDTheta)
+    plotPhaseSpace(harmonicAcceleration, harmonicEnergy,
+                   time, dt, initialTheta, initialDTheta)
+    plt.title(title, x=0.25)
+    plt.figlegend(('Pendulum', 'Harmonic Oscillator'))
+    plt.ylabel('θ')
+    plt.xlabel('t')
+    plt.savefig(name, dpi=80)
+
+
+def rollingMean(A, E, name, dt, R):
+    initialTheta = 0.5
+    initialDTheta = 0
+    timeLimit = 1000
+
+    meanPeriod = 50
+
+    title = "dt={0: .2g}, θ(0)/pi={1: .1g}, θ'(0)={2: .1g}".format(dt,
+                                                                   initialTheta, initialDTheta)
+
+    N = np.int_(ceil(meanPeriod / dt))
+    print("Running rollingMean, N={0}, {1}".format(N, title))
+
+    plt.figure()
+    plt.subplot(xlim=(0, timeLimit - N * dt), ylim=(-R, R))
 
     def running_mean(x, N):
         # Thanks to https://stackoverflow.com/a/13732668
         return np.convolve(x, np.ones((N, )) / N)[(N - 1):]
 
-    def runSingle(integrator):
+    def single(integrator):
         sim = Simulation(
-            lambda dt, theta, dTheta: integrator(pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
+            lambda dt, theta, dTheta: integrator(
+                pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
             dt, initialTheta, initialDTheta)
         time, theta, dTheta, energy = sim.run(timeLimit)
+        averageEnergy = running_mean(energy, N)
 
-        averageEnergy = running_mean(energy, 100)
+        plt.plot(time[:-N],
+                 np.log(averageEnergy[:-N] / averageEnergy[0]))
 
-        axis.plot(time, theta)
-        axis2.plot(time[:-100], averageEnergy[:-100] / averageEnergy[0])
+    single(euler)
+    single(eulerCromer)
+    single(velocityVerlet)
+    single(rungeKutta)
+    plt.ticklabel_format(style='sci', scilimits=(0, 0))
+    plt.title(title, x=0.4)
+    plt.figlegend(('Euler', 'Euler Cromer', 'Velocity Verlet', 'Runge Kutta'))
+    plt.ylabel('log(relative energy)')
+    plt.xlabel('t')
+    plt.savefig(name, dpi=80)
 
-    runSingle(euler)
-    runSingle(eulerCromer)
-    runSingle(velocityVerlet)
-    runSingle(rungeKutta)
 
+compare(0.1, 0, "comparison_1.png")
+compare(0.3, 0, "comparison_2.png")
+compare(0.5, 0, "comparison_3.png")
 
-runFor(6, 1, 1500, 0.1, 0.1 * np.pi, 0)
-runFor(6, 2, 1500, 0.1, 0.3 * np.pi, 0)
-runFor(6, 3, 1500, 0.1, 0.5 * np.pi, 0)
-runFor(6, 4, 150, 0.01, 0.1 * np.pi, 0)
-runFor(6, 5, 150, 0.01, 0.3 * np.pi, 0)
-runFor(6, 6, 150, 0.01, 0.5 * np.pi, 0)
+rollingMean(pendulumAcceleration, pendulumEnergy,
+            "rollingMean_1.png", 0.1, 0.025)
+rollingMean(pendulumAcceleration, pendulumEnergy,
+            "rollingMean_2.png", 0.01, 0.000005)
+rollingMean(pendulumAcceleration, pendulumEnergy,
+            "rollingMean_3.png", 0.001, 0.000001)
 
-plt.figlegend(('Euler', 'Euler Cromer', 'Velocity Verlet', 'Runge Kutta'))
-plt.show()
+rollingMean(harmonicAcceleration, harmonicEnergy,
+            "rollingMean_harmonic_1.png", 0.1, 0.025)
+rollingMean(harmonicAcceleration, harmonicEnergy,
+            "rollingMean_harmonic_2.png", 0.01, 0.000005)
+rollingMean(harmonicAcceleration, harmonicEnergy,
+            "rollingMean_harmonic_3.png", 0.001, 0.000001)
+
+# def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
+#     axis = plt.subplot(
+#         2,
+#         totalRuns,
+#         currentRun,
+#         xlim=(0, timeLimit),
+#         ylim=(-np.pi, np.pi),
+#         title="dt={0:.2g}, θ(0)/pi={0:.1g}, θ'(0)={1:.1g}".format(
+#             dt, initialTheta / np.pi, initialDTheta))
+#     axis2 = plt.subplot(
+#         2,
+#         totalRuns,
+#         totalRuns + currentRun,
+#         xlim=(0, timeLimit),
+#         ylim=(0.7, 1.3))
+#
+#     def running_mean(x, N):
+#         # Thanks to https://stackoverflow.com/a/13732668
+#         return np.convolve(x, np.ones((N, )) / N)[(N - 1):]
+#
+#     def runSingle(integrator):
+#         sim = Simulation(
+#             lambda dt, theta, dTheta: integrator(
+#                 pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
+#             dt, initialTheta, initialDTheta)
+#         time, theta, dTheta, energy = sim.run(timeLimit)
+#
+#         averageEnergy = running_mean(energy, 100)
+#
+#         axis.plot(time, theta)
+#         axis2.plot(time[:-100], averageEnergy[:-100] / averageEnergy[0])
+#
+#     runSingle(euler)
+#     runSingle(eulerCromer)
+#     runSingle(velocityVerlet)
+#     runSingle(rungeKutta)
+#
+#
+# runFor(6, 1, 1500, 0.1, 0.1 * np.pi, 0)
+# runFor(6, 2, 1500, 0.1, 0.3 * np.pi, 0)
+# runFor(6, 3, 1500, 0.1, 0.5 * np.pi, 0)
+# runFor(6, 4, 150, 0.01, 0.1 * np.pi, 0)
+# runFor(6, 5, 150, 0.01, 0.3 * np.pi, 0)
+# runFor(6, 6, 150, 0.01, 0.5 * np.pi, 0)
+#
+# plt.figlegend(('Euler', 'Euler Cromer', 'Velocity Verlet', 'Runge Kutta'))
+# plt.show()
