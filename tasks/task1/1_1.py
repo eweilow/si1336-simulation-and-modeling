@@ -17,13 +17,7 @@ class Simulation():
         self.t += self.dt
 
         self.theta, self.dTheta, self.energy = self.integrator(
-            self.dt, self.theta, self.dTheta
-        )
-
-        self.state["time"].append(self.t)
-        self.state["theta"].append(self.theta)
-        self.state["dTheta"].append(self.dTheta)
-        self.state["energy"].append(self.energy)
+            self.dt, self.theta, self.dTheta)
 
     def __reset(self):
         self.t = 0.0
@@ -31,12 +25,22 @@ class Simulation():
         self.dTheta = self.initialDTheta
         self.energy = 0
 
-        self.state = {
-            "time": [],
-            "theta": [],
-            "dTheta": [],
-            "energy": []
-        }
+        self.state = {"time": [], "theta": [], "dTheta": [], "energy": []}
+
+    def run(self, toTime, plotSteps=10000):
+        totalStep = np.int_(ceil((toTime / self.dt) / plotSteps))
+        print("Running a simulation with {0} steps".format(totalStep))
+        while self.t < (toTime - self.dt * totalStep):
+            for _ in range(totalStep):
+                self.integrate()
+
+            self.state["time"].append(self.t)
+            self.state["theta"].append(self.theta)
+            self.state["dTheta"].append(self.dTheta)
+            self.state["energy"].append(self.energy)
+
+        return self.state["time"], self.state["theta"], self.state[
+            "dTheta"], self.state["energy"]
 
     def animate(self, toTime, stepsPerFrame=5):
         self.__reset()
@@ -64,17 +68,16 @@ class Simulation():
             frame,
             init_func=init,
             frames=round(toTime / self.dt) // stepsPerFrame,
-            interval=1000/30,
+            interval=1000 / 30,
             blit=True,
-            repeat=False
-        )
+            repeat=False)
         plt.show()
 
 
 c = 9
 m = 1
 g = 9.81
-L = g/c
+L = g / c
 
 
 def pendulumAcceleration(theta):
@@ -82,57 +85,100 @@ def pendulumAcceleration(theta):
 
 
 def harmonicEnergy(theta, dTheta):
-    return 0.5*m*L**2*dTheta**2 + 0.5*m*g*L*theta**2
+    return 0.5 * m * L**2 * dTheta**2 + 0.5 * m * g * L * theta**2
 
 
 def pendulumEnergy(theta, dTheta):
-    return 0.5*m*L**2*dTheta**2 + m*g*L*(1.-np.cos(theta))
+    return 0.5 * m * L**2 * dTheta**2 + m * g * L * (1. - np.cos(theta))
 
 
-def euler(dt, theta, dTheta):
-    a = pendulumAcceleration(theta)
+def euler(A, E, dt, theta, dTheta):
+    a = A(theta)
     theta += dTheta * dt
     dTheta += a * dt
 
-    energy = pendulumEnergy(theta, dTheta)
+    energy = E(theta, dTheta)
     return theta, dTheta, energy
 
 
-def eulerCromer(dt, theta, dTheta):
-    a = pendulumAcceleration(theta)
+def eulerCromer(A, E, dt, theta, dTheta):
+    a = A(theta)
     dTheta += a * dt
     theta += dTheta * dt
 
-    energy = pendulumEnergy(theta, dTheta)
+    energy = E(theta, dTheta)
     return theta, dTheta, energy
 
 
-def velocityVerlet(dt, theta, dTheta):
-    a = pendulumAcceleration(theta)
-    theta += dTheta * dt + 0.5 * a * dt*dt
-    aNext = pendulumAcceleration(theta)
+def velocityVerlet(A, E, dt, theta, dTheta):
+    a = A(theta)
+    theta += dTheta * dt + 0.5 * a * dt * dt
+    aNext = A(theta)
     dTheta += 0.5 * (aNext + a) * dt
 
-    energy = pendulumEnergy(theta, dTheta)
+    energy = E(theta, dTheta)
     return theta, dTheta, energy
 
 
-def rungeKutta(dt, theta, dTheta):
-    a1 = pendulumAcceleration(theta) * dt
-    b1 = dTheta*dt
-    a2 = pendulumAcceleration(theta + b1/2) * dt
-    b2 = (dTheta + a1/2)*dt
-    a3 = pendulumAcceleration(theta + b2/2) * dt
-    b3 = (dTheta + a2/2)*dt
-    a4 = pendulumAcceleration(theta + b3) * dt
-    b4 = (dTheta + a3)*dt
+def rungeKutta(A, E, dt, theta, dTheta):
+    a1 = A(theta) * dt
+    b1 = dTheta * dt
+    a2 = A(theta + b1 / 2) * dt
+    b2 = (dTheta + a1 / 2) * dt
+    a3 = A(theta + b2 / 2) * dt
+    b3 = (dTheta + a2 / 2) * dt
+    a4 = A(theta + b3) * dt
+    b4 = (dTheta + a3) * dt
 
-    dTheta += 1/6 * (a1 + 2*a2 + 2*a3 + a4)
-    theta += 1/6 * (b1 + 2*b2 + 2*b3 + b4)
+    dTheta += 1 / 6 * (a1 + 2 * a2 + 2 * a3 + a4)
+    theta += 1 / 6 * (b1 + 2 * b2 + 2 * b3 + b4)
 
-    energy = pendulumEnergy(theta, dTheta)
+    energy = E(theta, dTheta)
     return theta, dTheta, energy
 
 
-sim = Simulation(rungeKutta, 1/60, 0.5, 5)
-sim.animate(50, 1)
+def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
+    axis = plt.subplot(
+        2,
+        totalRuns,
+        currentRun,
+        xlim=(0, timeLimit),
+        ylim=(-np.pi, np.pi),
+        title="dt={0:.2g}, θ(0)/pi={0:.1g}, θ'(0)={1:.1g}".format(
+            dt, initialTheta / np.pi, initialDTheta))
+    axis2 = plt.subplot(
+        2,
+        totalRuns,
+        totalRuns + currentRun,
+        xlim=(0, timeLimit),
+        ylim=(0.7, 1.3))
+
+    def running_mean(x, N):
+        return np.convolve(x, np.ones((N, )) / N)[(N - 1):]
+
+    def runSingle(integrator):
+        sim = Simulation(
+            lambda dt, theta, dTheta: integrator(pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
+            dt, initialTheta, initialDTheta)
+        time, theta, dTheta, energy = sim.run(timeLimit)
+
+        averageEnergy = running_mean(energy, 100)
+
+        axis.plot(time, theta)
+        axis2.plot(time[:-100], averageEnergy[:-100] / averageEnergy[0])
+
+    runSingle(euler)
+    runSingle(eulerCromer)
+    runSingle(velocityVerlet)
+    runSingle(rungeKutta)
+
+
+runFor(6, 1, 1500, 0.1, 0.1 * np.pi, 0)
+runFor(6, 2, 1500, 0.1, 0.3 * np.pi, 0)
+runFor(6, 3, 1500, 0.1, 0.5 * np.pi, 0)
+runFor(6, 4, 150, 0.01, 0.1 * np.pi, 0)
+runFor(6, 5, 150, 0.01, 0.3 * np.pi, 0)
+runFor(6, 6, 150, 0.01, 0.5 * np.pi, 0)
+
+plt.figlegend(('Euler', 'Euler Cromer', 'Velocity Verlet', 'Runge Kutta'))
+plt.show()
