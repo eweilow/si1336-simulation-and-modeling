@@ -138,6 +138,27 @@ def rungeKutta(A, E, dt, theta, dTheta):
     return theta, dTheta, energy
 
 
+def solve(A, E, initialTheta, initialDTheta, name):
+    dt = 0.001
+    timeLimit = 5
+
+    title = "dt={0: .2g}, θ(0)/pi={1: .1g}, θ'(0)={2: .1g}".format(dt,
+                                                                   initialTheta, initialDTheta)
+    print("Solving " + title)
+    sim = Simulation(
+        lambda dt, theta, dTheta: velocityVerlet(
+            A, E, dt, theta, dTheta),
+        dt, initialTheta, initialDTheta)
+    time, theta, dTheta, energy = sim.run(timeLimit)
+    plt.figure()
+    plt.plot(time, theta)
+    plt.plot(time, dTheta)
+    plt.plot(time, energy)
+    plt.figlegend(('θ', 'θ\'', 'E'))
+    plt.title(title, x=0.25)
+    plt.savefig(name, dpi=80)
+
+
 def plotPhaseSpace(A, E, timeLimit,  dt, initialTheta, initialDTheta):
     sim = Simulation(
         lambda dt, theta, dTheta: velocityVerlet(
@@ -145,6 +166,8 @@ def plotPhaseSpace(A, E, timeLimit,  dt, initialTheta, initialDTheta):
         dt, initialTheta, initialDTheta)
     time, theta, dTheta, energy = sim.run(timeLimit)
     plt.plot(time, theta)
+
+    return time, theta
 
 
 def compare(initialTheta, initialDTheta, name):
@@ -163,6 +186,34 @@ def compare(initialTheta, initialDTheta, name):
     plt.title(title, x=0.25)
     plt.figlegend(('Pendulum', 'Harmonic Oscillator'))
     plt.ylabel('θ')
+    plt.xlabel('t')
+    plt.savefig(name, dpi=80)
+
+
+def compareHarmonicNumericalToAnalytic(initialTheta, initialDTheta, name):
+    dt = 0.001
+    time = 1000
+
+    title = "dt={0: .2g}, θ(0)/pi={1: .1g}, θ'(0)={2: .1g}".format(dt,
+                                                                   initialTheta, initialDTheta)
+    print("Comparing " + title)
+    plt.figure()
+    plt.subplot(xlim=(0, time), ylim=(1-0.005, 1 + 0.005))
+
+    sim = Simulation(
+        lambda dt, theta, dTheta: velocityVerlet(
+            harmonicAcceleration, harmonicEnergy, dt, theta, dTheta),
+        dt, initialTheta, initialDTheta)
+    numericalTime, numericalTheta, dTheta, energy = sim.run(time)
+
+    analyticSolution = np.cos(np.array(numericalTime)
+                              * np.sqrt(c)) * initialTheta
+    #plt.plot(numericalTime, analyticSolution)
+
+    plt.plot(numericalTime, np.divide(
+        np.abs(np.add(analyticSolution, 1.0)), np.abs(np.add(numericalTheta, 1.0))))
+    plt.title(title, x=0.25)
+    plt.figlegend(('(1+|Analytic|)/(1+|Numerical|)',))
     plt.xlabel('t')
     plt.savefig(name, dpi=80)
 
@@ -191,7 +242,7 @@ def rollingMean(A, E, name, dt, R):
         sim = Simulation(
             lambda dt, theta, dTheta: integrator(
                 pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
-            dt, initialTheta, initialDTheta)
+            dt, initialTheta * np.pi, initialDTheta * np.pi)
         time, theta, dTheta, energy = sim.run(timeLimit)
         averageEnergy = running_mean(energy, N)
 
@@ -210,23 +261,35 @@ def rollingMean(A, E, name, dt, R):
     plt.savefig(name, dpi=80)
 
 
+solve(pendulumAcceleration, pendulumEnergy, 0.1, 0, "sol_pendulum_1.png")
+solve(pendulumAcceleration, pendulumEnergy, 0.3, 0, "sol_pendulum_2.png")
+solve(pendulumAcceleration, pendulumEnergy, 0.5, 0, "sol_pendulum_3.png")
+
+solve(harmonicAcceleration, harmonicEnergy, 0.1, 0, "sol_harmonic_1.png")
+solve(harmonicAcceleration, harmonicEnergy, 0.3, 0, "sol_harmonic_2.png")
+solve(harmonicAcceleration, harmonicEnergy, 0.5, 0, "sol_harmonic_3.png")
+
 compare(0.1, 0, "comparison_1.png")
 compare(0.3, 0, "comparison_2.png")
 compare(0.5, 0, "comparison_3.png")
 
+compareHarmonicNumericalToAnalytic(0.1, 0, "comparison_numanalytic_1.png")
+compareHarmonicNumericalToAnalytic(0.3, 0, "comparison_numanalytic_2.png")
+compareHarmonicNumericalToAnalytic(0.5, 0, "comparison_numanalytic_3.png")
+
 rollingMean(pendulumAcceleration, pendulumEnergy,
             "rollingMean_1.png", 0.1, 0.025)
-rollingMean(pendulumAcceleration, pendulumEnergy,
-            "rollingMean_2.png", 0.01, 0.000005)
-rollingMean(pendulumAcceleration, pendulumEnergy,
-            "rollingMean_3.png", 0.001, 0.000001)
+# rollingMean(pendulumAcceleration, pendulumEnergy,
+#            "rollingMean_2.png", 0.01, 0.000005)
+# rollingMean(pendulumAcceleration, pendulumEnergy,
+#            "rollingMean_3.png", 0.001, 0.000001)
 
 rollingMean(harmonicAcceleration, harmonicEnergy,
             "rollingMean_harmonic_1.png", 0.1, 0.025)
-rollingMean(harmonicAcceleration, harmonicEnergy,
-            "rollingMean_harmonic_2.png", 0.01, 0.000005)
-rollingMean(harmonicAcceleration, harmonicEnergy,
-            "rollingMean_harmonic_3.png", 0.001, 0.000001)
+# rollingMean(harmonicAcceleration, harmonicEnergy,
+#            "rollingMean_harmonic_2.png", 0.01, 0.000005)
+# rollingMean(harmonicAcceleration, harmonicEnergy,
+#            "rollingMean_harmonic_3.png", 0.001, 0.000001)
 
 # def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
 #     axis = plt.subplot(
