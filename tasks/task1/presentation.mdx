@@ -73,3 +73,33 @@ Using Verlet integration: sees a drift in period, but the numerical integration 
 
 Harmonic oscillator has constant period, smaller than pendulum.
 The perturbation series does not approximate the harmonic oscillator well.
+
+---
+
+## 1.3 Dampened harmonic oscillator
+
+![](./plots/1_3/dampened_dx.png)
+![](./plots/1_3/dampened_E.png)
+![](./plots/1_3/dampened_x.png)
+
+Energy decreases over time with dampening.
+
+---
+
+## 1.3 Relaxation time as function of γ
+![](./plots/1_3/study.png)
+
+<p>
+Method: fit{" "}
+<InlineTex texContent={"$$f(t) = A e^{-Bt}$$"}/>
+{" "}to local peaks of simulated oscillations.
+</p>
+<p>
+For critical dampening{" "}
+<InlineTex texContent={"$$\\gamma_c \\approx 5.9$$"}/>
+{" "}, only 1 peak x(0) exists and f(t) cannot be fit.
+</p>
+---
+
+## 1.3 Minimum x as function of γ
+![](./plots/1_3/study_2.png)
