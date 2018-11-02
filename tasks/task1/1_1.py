@@ -261,80 +261,41 @@ def rollingMean(A, E, name, dt, R):
     plt.savefig(name, dpi=80)
 
 
-solve(pendulumAcceleration, pendulumEnergy, 0.1, 0, "sol_pendulum_1.png")
-solve(pendulumAcceleration, pendulumEnergy, 0.3, 0, "sol_pendulum_2.png")
-solve(pendulumAcceleration, pendulumEnergy, 0.5, 0, "sol_pendulum_3.png")
+solve(pendulumAcceleration, pendulumEnergy,
+      0.1, 0, "./plots/1_1/sol_pendulum_1.png")
+solve(pendulumAcceleration, pendulumEnergy,
+      0.3, 0, "./plots/1_1/sol_pendulum_2.png")
+solve(pendulumAcceleration, pendulumEnergy,
+      0.5, 0, "./plots/1_1/sol_pendulum_3.png")
 
-solve(harmonicAcceleration, harmonicEnergy, 0.1, 0, "sol_harmonic_1.png")
-solve(harmonicAcceleration, harmonicEnergy, 0.3, 0, "sol_harmonic_2.png")
-solve(harmonicAcceleration, harmonicEnergy, 0.5, 0, "sol_harmonic_3.png")
+solve(harmonicAcceleration, harmonicEnergy,
+      0.1, 0, "./plots/1_1/sol_harmonic_1.png")
+solve(harmonicAcceleration, harmonicEnergy,
+      0.3, 0, "./plots/1_1/sol_harmonic_2.png")
+solve(harmonicAcceleration, harmonicEnergy,
+      0.5, 0, "./plots/1_1/sol_harmonic_3.png")
 
-compare(0.1, 0, "comparison_1.png")
-compare(0.3, 0, "comparison_2.png")
-compare(0.5, 0, "comparison_3.png")
+compare(0.1, 0, "./plots/1_1/comparison_1.png")
+compare(0.3, 0, "./plots/1_1/comparison_2.png")
+compare(0.5, 0, "./plots/1_1/comparison_3.png")
 
-compareHarmonicNumericalToAnalytic(0.1, 0, "comparison_numanalytic_1.png")
-compareHarmonicNumericalToAnalytic(0.3, 0, "comparison_numanalytic_2.png")
-compareHarmonicNumericalToAnalytic(0.5, 0, "comparison_numanalytic_3.png")
+compareHarmonicNumericalToAnalytic(
+    0.1, 0, "./plots/1_1/comparison_numanalytic_1.png")
+compareHarmonicNumericalToAnalytic(
+    0.3, 0, "./plots/1_1/comparison_numanalytic_2.png")
+compareHarmonicNumericalToAnalytic(
+    0.5, 0, "./plots/1_1/comparison_numanalytic_3.png")
 
 rollingMean(pendulumAcceleration, pendulumEnergy,
-            "rollingMean_1.png", 0.1, 0.025)
-# rollingMean(pendulumAcceleration, pendulumEnergy,
-#            "rollingMean_2.png", 0.01, 0.000005)
-# rollingMean(pendulumAcceleration, pendulumEnergy,
-#            "rollingMean_3.png", 0.001, 0.000001)
+            "./plots/1_1/rollingMean_1.png", 0.1, 0.025)
+rollingMean(pendulumAcceleration, pendulumEnergy,
+            "./plots/1_1/rollingMean_2.png", 0.01, 0.000005)
+rollingMean(pendulumAcceleration, pendulumEnergy,
+            "./plots/1_1/rollingMean_3.png", 0.001, 0.000001)
 
 rollingMean(harmonicAcceleration, harmonicEnergy,
-            "rollingMean_harmonic_1.png", 0.1, 0.025)
-# rollingMean(harmonicAcceleration, harmonicEnergy,
-#            "rollingMean_harmonic_2.png", 0.01, 0.000005)
-# rollingMean(harmonicAcceleration, harmonicEnergy,
-#            "rollingMean_harmonic_3.png", 0.001, 0.000001)
-
-# def runFor(totalRuns, currentRun, timeLimit, dt, initialTheta, initialDTheta):
-#     axis = plt.subplot(
-#         2,
-#         totalRuns,
-#         currentRun,
-#         xlim=(0, timeLimit),
-#         ylim=(-np.pi, np.pi),
-#         title="dt={0:.2g}, θ(0)/pi={0:.1g}, θ'(0)={1:.1g}".format(
-#             dt, initialTheta / np.pi, initialDTheta))
-#     axis2 = plt.subplot(
-#         2,
-#         totalRuns,
-#         totalRuns + currentRun,
-#         xlim=(0, timeLimit),
-#         ylim=(0.7, 1.3))
-#
-#     def running_mean(x, N):
-#         # Thanks to https://stackoverflow.com/a/13732668
-#         return np.convolve(x, np.ones((N, )) / N)[(N - 1):]
-#
-#     def runSingle(integrator):
-#         sim = Simulation(
-#             lambda dt, theta, dTheta: integrator(
-#                 pendulumAcceleration, pendulumEnergy, dt, theta, dTheta),
-#             dt, initialTheta, initialDTheta)
-#         time, theta, dTheta, energy = sim.run(timeLimit)
-#
-#         averageEnergy = running_mean(energy, 100)
-#
-#         axis.plot(time, theta)
-#         axis2.plot(time[:-100], averageEnergy[:-100] / averageEnergy[0])
-#
-#     runSingle(euler)
-#     runSingle(eulerCromer)
-#     runSingle(velocityVerlet)
-#     runSingle(rungeKutta)
-#
-#
-# runFor(6, 1, 1500, 0.1, 0.1 * np.pi, 0)
-# runFor(6, 2, 1500, 0.1, 0.3 * np.pi, 0)
-# runFor(6, 3, 1500, 0.1, 0.5 * np.pi, 0)
-# runFor(6, 4, 150, 0.01, 0.1 * np.pi, 0)
-# runFor(6, 5, 150, 0.01, 0.3 * np.pi, 0)
-# runFor(6, 6, 150, 0.01, 0.5 * np.pi, 0)
-#
-# plt.figlegend(('Euler', 'Euler Cromer', 'Velocity Verlet', 'Runge Kutta'))
-# plt.show()
+            "./plots/1_1/rollingMean_harmonic_1.png", 0.1, 0.025)
+rollingMean(harmonicAcceleration, harmonicEnergy,
+            "./plots/1_1/rollingMean_harmonic_2.png", 0.01, 0.000005)
+rollingMean(harmonicAcceleration, harmonicEnergy,
+            "./plots/1_1/rollingMean_harmonic_3.png", 0.001, 0.000001)
