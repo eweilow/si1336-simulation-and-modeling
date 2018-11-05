@@ -101,8 +101,9 @@ plotRunningMean(times, np.add(kenergies, penergies))
 plt.plot([0, 1500], [omega_0**2 * 0.5 * (np.pi / 2)
                      ** 2, omega_0**2 * 0.5 * (np.pi / 2)**2])
 
-plt.xlabel("E")
-plt.ylabel("t")
+plt.xlabel("t")
+plt.ylabel("E")
+plt.title("Average of energy over time")
 plt.figlegend(('Leapfrog', 'Velocity Verlet', 'Analytic solution'))
 plt.savefig("./plots/1_5/study.png", dpi=120)
 

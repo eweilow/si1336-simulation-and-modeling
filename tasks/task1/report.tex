@@ -12,46 +12,96 @@
 \newcommand{\triplefigure}[3]{
 \begin{figure}[H]
   \centering
-  \begin{minipage}{0.3\linewidth}
+  \begin{minipage}{0.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{#1}
   \end{minipage}
-  \begin{minipage}{0.3\linewidth}
+  \begin{minipage}{0.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{#2}
   \end{minipage}
-  \begin{minipage}{0.3\linewidth}
+  \begin{minipage}{0.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{#3}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlefigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
   \end{minipage}
 \end{figure}
 }
 
 \begin{document}
 \maketitle
+\newpage
 
-\section{1.1}
+\section*{1.1}
 
-\subsection{Pendulums vs harmonic oscillators}
+\subsection*{Pendulums vs harmonic oscillators}
 \triplefigure{./plots/1_1/comparison_1.png}{./plots/1_1/comparison_2.png}{./plots/1_1/comparison_3.png}
 In this first part, it can be seen that a numerical solution for a pendulum has longer period than for that of a harmonic oscillator.
+Increasing the initial angle increases the amplitude of oscillations.
 
-\subsection{Pendulums: general solution}
+\subsection*{Pendulums: general solution}
 \triplefigure{./plots/1_1/sol_pendulum_1.png}{./plots/1_1/sol_pendulum_2.png}{./plots/1_1/sol_pendulum_3.png}
-For a pendulum, the solution doesn't scale linearly with increased starting angle. 
+It can be seen that the solution doesn't scale linearly with increased starting angle. 
 
-\subsection{Harmonic oscillators: general solution}
+\subsection*{Harmonic oscillators: general solution}
 \triplefigure{./plots/1_1/sol_harmonic_1.png}{./plots/1_1/sol_harmonic_2.png}{./plots/1_1/sol_harmonic_3.png}
 More or less the same result as for a pendulum, though with a slightly shorter period as previously shown. 
 
-\subsection{Rolling mean of energy for pendulum}
+\subsection*{Rolling mean of energy for pendulum}
 \triplefigure{./plots/1_1/rollingMean_1.png}{./plots/1_1/rollingMean_2.png}{./plots/1_1/rollingMean_3.png}
-More or less the same result as for a pendulum, though with a slightly shorter period as previously shown. 
+We can't even see the simulation using Euler in this plot - it shot right up within mere seconds.
+Runge Kutta becomes "good" on timescales on the order of 1000 seconds for $\Delta t \approx 0.01$.
+For longer timescales, we need a smaller $\Delta t$.
 
-\subsection{Rolling mean of energy for harmonic oscillator}
+Both Euler-Cromer and Velocity Verlet have energies that oscillate fast enough to cause aliasing effects (hence why the rolling average of those are a solid block of color).
+
+\subsection*{Rolling mean of energy for harmonic oscillator}
 \triplefigure{./plots/1_1/rollingMean_harmonic_1.png}{./plots/1_1/rollingMean_harmonic_2.png}{./plots/1_1/rollingMean_harmonic_3.png}
-Same result as for pendulum, expected since period is almost same.
+For the harmonic oscillator, we get basically the same results as for the pendulum but the energies oscillate less for Euler-Cromer and Velocity Verlet.
 
+\subsection*{Harmonic oscillators: Numerical vs analytic}
+\triplefigure{./plots/1_1/comparison_numanalytic_1.png}{./plots/1_1/comparison_numanalytic_2.png}{./plots/1_1/comparison_numanalytic_3.png}
+Using Verlet integration: sees a drift in period, but the numerical integration is stable.
+
+\section*{1.2}
+\singlefigure{./plots/1_2/period.png}
+Harmonic oscillator has constant period, smaller than pendulum.
+The perturbation series does not approximate the harmonic oscillator well.
+
+\section*{1.3}
+
+\subsection*{Dampened harmonic oscillator}
+\triplefigure{./plots/1_3/dampened_dx.png}{./plots/1_3/dampened_E.png}{./plots/1_3/dampened_x.png}
+Energy decreases over time with dampening.
+
+\subsection*{Relaxation time as function of $\gamma$}
+\singlefigure{./plots/1_3/study.png}
+Fitting $f(t) = A e^{-Bt}$ to local peaks of simulated oscillations.
+
+\subsection*{Minimum x as function of $\gamma$}
+\singlefigure{./plots/1_3/study_2.png}
+Energy decreases over time with dampening.
+
+\section*{1.4}
+\subsection*{Phase space portrait of dampened pendulum}
+\singlefigure{./plots/1_4/study.png}
+
+\section*{1.5}
+\subsection*{Energy average}
+\singlefigure{./plots/1_5/study.png}
+Both are energy preserving over long time, even for silly large time steps.
+
+\subsection*{Energy average}
+\singlefigure{./plots/1_5/study2.png}
+Leapfrog produces different trajectory.
 
 % ![](./plots/1_1/comparison_1.png)
 % ![](./plots/1_1/comparison_2.png)
