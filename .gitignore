@@ -106,3 +106,9 @@ venv.bak/
 
 node_modules/
 package-lock.json
+
+*.synctex.gz
+*.aux
+*.fdb_latexmk
+*.fls
+__latexindent_temp.tex

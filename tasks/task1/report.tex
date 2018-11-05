@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\usepackage[cm]{fullpage}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{float}
+
+\title{S1336 - Project 1}%replace with the appropriate homework number
+\author{Erik Weilow} %if necessary, replace with your course title
+
+\newcommand{\triplefigure}[3]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+  \begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{#3}
+  \end{minipage}
+\end{figure}
+}
+
+\begin{document}
+\maketitle
+
+\section{1.1}
+
+\subsection{Pendulums vs harmonic oscillators}
+\triplefigure{./plots/1_1/comparison_1.png}{./plots/1_1/comparison_2.png}{./plots/1_1/comparison_3.png}
+In this first part, it can be seen that a numerical solution for a pendulum has longer period than for that of a harmonic oscillator.
+
+\subsection{Pendulums: general solution}
+\triplefigure{./plots/1_1/sol_pendulum_1.png}{./plots/1_1/sol_pendulum_2.png}{./plots/1_1/sol_pendulum_3.png}
+For a pendulum, the solution doesn't scale linearly with increased starting angle. 
+
+\subsection{Harmonic oscillators: general solution}
+\triplefigure{./plots/1_1/sol_harmonic_1.png}{./plots/1_1/sol_harmonic_2.png}{./plots/1_1/sol_harmonic_3.png}
+More or less the same result as for a pendulum, though with a slightly shorter period as previously shown. 
+
+\subsection{Rolling mean of energy for pendulum}
+\triplefigure{./plots/1_1/rollingMean_1.png}{./plots/1_1/rollingMean_2.png}{./plots/1_1/rollingMean_3.png}
+More or less the same result as for a pendulum, though with a slightly shorter period as previously shown. 
+
+\subsection{Rolling mean of energy for harmonic oscillator}
+\triplefigure{./plots/1_1/rollingMean_harmonic_1.png}{./plots/1_1/rollingMean_harmonic_2.png}{./plots/1_1/rollingMean_harmonic_3.png}
+Same result as for pendulum, expected since period is almost same.
+
+
+% ![](./plots/1_1/comparison_1.png)
+% ![](./plots/1_1/comparison_2.png)
+% ![](./plots/1_1/comparison_3.png)
+\end{document}
