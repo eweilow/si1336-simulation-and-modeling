@@ -2,10 +2,10 @@
 import matplotlib.pyplot as plt
 
 
-def run(r, doRound=False):
+def run(r, x0, doRound=False):
     steps = range(200)
     xvals = []
-    x = 0.5
+    x = x0
 
     for _ in steps:
         xvals.append(x)
@@ -14,21 +14,3 @@ def run(r, doRound=False):
             x = round(x, 6)
 
     return steps, xvals
-
-
-# plt.figure()
-#steps, xvals = run(0.91, False)
-#plt.plot(steps, xvals)
-#steps, xvals = run(0.91, True)
-#plt.plot(steps, xvals)
-#plt.figlegend(('Not rounded', 'Rounded'))
-# plt.show()
-#
-# plt.figure()
-#steps, xvals = run(0.6, False)
-#plt.plot(steps, xvals)
-#steps, xvals = run(0.6, True)
-#plt.plot(steps, xvals)
-#plt.figlegend(('Not rounded', 'Rounded'))
-# plt.show()
-#
