@@ -23,6 +23,14 @@ def runFor(x0, round=False):
 
 
 plt.figure()
-runFor(0.5, True)
 runFor(0.5, False)
-plt.show()
+runFor(0.5, True)
+plt.figlegend(('Not rounded', 'Rounded'))
+plt.savefig("./plots/2_2/study.png")
+
+plt.figure()
+runFor(0.25, False)
+runFor(0.5, False)
+runFor(0.75, False)
+plt.figlegend(('$x_0 = 0.25$', '$x_0 = 0.5$', '$x_0 = 0.75$'))
+plt.savefig("./plots/2_2/dependence.png")

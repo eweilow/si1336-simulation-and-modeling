@@ -1,0 +1,58 @@
+import { Tex, InlineTex } from 'react-tex';
+export { default as theme } from '../theme'
+
+# SI1336 - Project 2
+## E. Weilow
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css" integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML" crossOrigin="anonymous"/>
+
+---
+
+## 2.1  - Effects of rounding errors on a population model
+
+![](./plots/2_1/r091.png)
+![](./plots/2_1/r06.png)
+
+<p>
+When{" "}
+<InlineTex texContent={"$$r < r_\\infty$$"}/>, 
+rounding doesn't affect the system. 
+</p>
+
+<p>
+When{" "}
+<InlineTex texContent={"$$r > r_\\infty$$"}/>, 
+rounding <b>does</b> affect the system.
+</p>
+
+---
+
+## 2.2 - The Lyapunov exponent for a population model
+
+![](./plots/2_2/study.png)
+
+<p>
+The sign of{" "}
+<InlineTex texContent={"$$\\lambda$$"}/>{" "}
+is positive for{" "}
+<InlineTex texContent={"$$0.76 < r < r_\\infty$$"}/>, that is: <em>if the system is not chaotic the sign is positive.</em>.
+</p>
+
+<p>
+The effects of rounding doesn't have much of an impact unless{" "}
+<InlineTex texContent={"$$r > r_\\infty$$"}/>
+</p>
+
+---
+
+## 2.2 - The dependence on initial value
+
+![](./plots/2_2/dependence.png)
+
+<p>
+Can see no dependence on{" "}
+<InlineTex texContent={"$$x_0$$"}/> for the Lyapunov exponent.
+</p>
+
+---
+
+## 2.3 - Lorenz attractor

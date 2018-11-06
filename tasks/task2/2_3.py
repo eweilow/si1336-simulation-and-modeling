@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import random
 
 
 def integrate(x0, y0, z0):
@@ -8,60 +9,76 @@ def integrate(x0, y0, z0):
     b = 8/3
     r = 28
 
-    dt = 0.001
+    dt = 0.0001
 
     t = 0
     X = np.array([x0, y0, z0])
 
-    tvals = []
-    xvals = []
-    yvals = []
-    zvals = []
-
-    i = 0
+    dS = np.array([0.0, 0.0, 0.0])
+    partialSum = np.array([0.0, 0.0, 0.0])
 
     def rungeKutta(f, s):
-        k1 = dt * f(s)
-        k2 = dt * f(s + k1/2)
-        k3 = dt * f(s + k2/2)
-        k4 = dt * f(s + k3)
+        nonlocal partialSum, dS
+        partialSum[0] = 0
+        partialSum[1] = 0
+        partialSum[2] = 0
 
-        return s + (k1 + 2*k2 + 2*k3 + k4) / 6
+        f(dS, s)
+        partialSum += dS * dt
+        f(dS, s + dS/2 * dt)
+        partialSum += 2 * dS * dt
+        f(dS, s + dS/2 * dt)
+        partialSum += 2 * dS * dt
+        f(dS, s + dS * dt)
+        partialSum += dS * dt
 
-    def df(S):
-        return np.array([
-            -sigma * S[0] + sigma * S[1],
-            -S[0] * S[2] + r * S[0] - S[1],
-            S[0] * S[1] - b * S[2]
-        ])
+        return s + partialSum / 6
 
-    def step():
-        nonlocal t, X
+    def df(array, S):
+        array[0] = -sigma * S[0] + sigma * S[1]
+        array[1] = -S[0] * S[2] + r * S[0] - S[1]
+        array[2] = S[0] * S[1] - b * S[2]
 
-        if i % 1000 == 0:
-            tvals.append(t)
-            xvals.append(X[0])
-            yvals.append(X[1])
-            zvals.append(X[2])
+    T = 100.0
+    length = np.int_(np.floor(T / dt))
+    times = np.empty((length, 1))
+    points = np.empty((length, 3))
 
+    lastOutsideRadius = 0.0
+    cutIndex = 0
+    for i in range(0, length):
+        times[i] = t
+        points[i, :] = X
         X = rungeKutta(df, X)
+        cutIndex = i
+
+        norm = np.linalg.norm(X - [0, 0, r])
+        if norm > r:
+            lastOutsideRadius = t
+
+        if t - lastOutsideRadius > 1:
+            break
 
         t += dt
 
-    while t < 5:
-        step()
-
-    return tvals, xvals, yvals, zvals
+    return t, X[0], X[1], X[2], times[:cutIndex], points[:cutIndex], np.linalg.norm(X - [0, 0, r])
 
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-for x0 in range(-100, 101, 50):
-    for y0 in range(-100, 101, 50):
-        for z0 in range(-100, 101, 50):
-            t, x, y, z = integrate(x0, y0, z0)
 
-            ax.plot(x, y, z)
+R = 10000
+# random.seed(5)
+for i in range(500):
+    x0 = random.uniform(-R, R)
+    y0 = random.uniform(-R, R)
+    z0 = random.uniform(-R, R)
+    print("Running")
+    t, x, y, z, times, points, N = integrate(x0, y0, z0)
+
+    if N > 28:
+        print("Plotting")
+        ax.plot(points[:, 0], points[:, 1], points[:, 2])
 
 plt.show()
