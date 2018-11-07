@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "mdx-deck presentation.mdx --width 1280 --height 720",
-    "export": "mdx-deck pdf presentation.mdx --width 1280 --height 720 --out-file ./presentation.pdf"
+    "export": "mdx-deck pdf presentation.mdx --width 1920 --height 1080 --out-file ./presentation.pdf"
   },
   "dependencies": {
     "mdx-deck": "^1.7.7",
