@@ -10,7 +10,7 @@ r = 28
 
 
 def integrate(x0, y0, z0):
-    dt = 0.0001
+    dt = 0.00008
 
     t = 0
     X = np.array([x0, y0, z0])
@@ -37,7 +37,7 @@ def integrate(x0, y0, z0):
         array[1] = -S[0] * S[2] + r * S[0] - S[1]
         array[2] = S[0] * S[1] - b * S[2]
 
-    T = 100.0
+    T = 150.0
     length = np.int_(np.floor(T / dt))
     # times = np.empty((length, 1))
     # points = np.empty((length, 3))
@@ -84,7 +84,6 @@ fig = plt.figure()
 
 
 R = 10000
-random.seed(5)
 
 #N = 100
 #averages = np.empty((N, 1))
