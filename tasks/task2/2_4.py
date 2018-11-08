@@ -8,7 +8,7 @@ def integrate(x0, y0, z0):
     b = 8/3
     r = 28
 
-    dt = 0.001
+    dt = 0.0001
 
     t = 0
     X = np.array([x0, y0, z0])
@@ -51,16 +51,28 @@ def integrate(x0, y0, z0):
     while t < 25:
         step()
 
-    return tvals, xvals, yvals, zvals
+    return np.array(tvals), np.array(xvals), np.array(yvals), np.array(zvals)
 
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-t, x, y, z = integrate(25, 0, 0)
-ax.plot(x, y, z)
+t0, x0, y0, z0 = integrate(25, 0, 0)
+t1, x1, y1, z1 = integrate(25 + 0.01, 0, 0)
 
-t, x, y, z = integrate(25 + 0.001, 0, 0)
-ax.plot(x, y, z)
+ax.plot(x0, y0, z0)
+ax.plot(x1, y1, z1)
+plt.figlegend(('$x_0 = 25$', '$x_0 = 25.01$'))
 
-plt.show()
+dx = x0 - x1
+dy = y0 - y1
+dz = z0 - z1
+plt.savefig("./plots/2_4/solution.png")
+
+plt.figure()
+r = np.sqrt(dx**2 + dy**2 + dz**2)
+plt.plot(r, t0)
+plt.ylabel("t")
+plt.xlabel(
+    "$\sqrt{(x_0(t) - x_1(t))^2 + (y_0(t) - y_1(t))^2 + (z_0(t) - z_1(t))^2}$")
+plt.savefig("./plots/2_4/difference.png")
