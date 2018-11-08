@@ -56,3 +56,59 @@ Can see no dependence on{" "}
 ---
 
 ## 2.3 - Lorenz attractor
+
+<p>
+  Using a small timestep of{" "}
+<InlineTex texContent={"$$\\Delta t = 0.00008$$"}/>{" "}
+for a random sample of initial values:
+<br/>
+<br/>
+<InlineTex texContent={"$$x_0 \\in (-1000, 1000)$$"}/>
+<br/>
+<InlineTex texContent={"$$y_0 \\in (-1000, 1000)$$"}/>
+<br/>
+<InlineTex texContent={"$$z_0 \\in (-1000, 1000)$$"}/>
+</p>
+
+---
+## 2.3 - Lorenz attractor
+
+25 CPU hours later...
+
+![](./plots/2_3/histo.png)
+
+<p>
+Can see that the average of
+<InlineTex texContent={" $$r = \\sqrt{x^2 + y^2 + z^2}$$ "}/>
+over a time period of
+<InlineTex texContent={" $$0 < t < 100$$, "}/>
+is more or less bounded by 
+<InlineTex texContent={" $$r \\lt 60$$ "}/>
+</p>
+
+Can thus conclude that it's very unlikely that a solution doesn't get attracted into the basin.
+
+---
+## 2.4 Lorenz attractor, sensitivity to initial values
+
+![](./plots/2_4/solution.png)
+![](./plots/2_4/difference.png)
+
+Even for small difference in initial value, the solutions differ much after some time...
+
+---
+
+## 2.5
+
+![](./plots/2_5/study.png)
+![](./plots/2_5/peaks.png)
+
+<p>
+The left plot shows z(t) for a solution starting in 
+<InlineTex texContent={" $$x(0) = 10, y(0) = 0, z(0) = 0$$"}/>
+</p>
+<p>
+From the right plot, it's obvious that the ratio 
+<InlineTex texContent={" $$\\frac{z_{m+1}}{z_m}$$ "}/>
+isn't always greater than unity. Can we thus conclude that the Lorenz attractor is semi-chaotic?
+</p>
