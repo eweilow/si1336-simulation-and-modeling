@@ -4,11 +4,12 @@ import numpy as np
 import random
 
 
-def integrate(x0, y0, z0):
-    sigma = 10
-    b = 8/3
-    r = 28
+sigma = 10
+b = 8/3
+r = 28
 
+
+def integrate(x0, y0, z0):
     dt = 0.0001
 
     t = 0
@@ -19,12 +20,9 @@ def integrate(x0, y0, z0):
 
     def rungeKutta(f, s):
         nonlocal partialSum, dS
-        partialSum[0] = 0
-        partialSum[1] = 0
-        partialSum[2] = 0
 
         f(dS, s)
-        partialSum += dS * dt
+        partialSum = dS * dt
         f(dS, s + dS/2 * dt)
         partialSum += 2 * dS * dt
         f(dS, s + dS/2 * dt)
@@ -41,44 +39,86 @@ def integrate(x0, y0, z0):
 
     T = 100.0
     length = np.int_(np.floor(T / dt))
-    times = np.empty((length, 1))
-    points = np.empty((length, 3))
+    # times = np.empty((length, 1))
+    # points = np.empty((length, 3))
 
-    lastOutsideRadius = 0.0
-    cutIndex = 0
+    average = 0
+    R = [0, 0, r]
+
+    runningAverage = np.empty((length, 1))
     for i in range(0, length):
-        times[i] = t
-        points[i, :] = X
+        # times[i] = t
+        # points[i, :] = X
         X = rungeKutta(df, X)
-        cutIndex = i
-
-        norm = np.linalg.norm(X - [0, 0, r])
-        if norm > r:
-            lastOutsideRadius = t
-
-        if t - lastOutsideRadius > 1:
-            break
-
         t += dt
 
-    return t, X[0], X[1], X[2], times[:cutIndex], points[:cutIndex], np.linalg.norm(X - [0, 0, r])
+        average += np.linalg.norm(X - R) / length
+        #runningAverage[i] = average / (i + 1)
+
+    # , times, points
+    return t, np.array(X[0]), np.array(X[1]), np.array(X[2]), average
+
+
+def process(x0, y0, z0):
+    return integrate(x0, y0, z0)
+    # t, x, y, z, times, points = integrate(x0, y0, z0)
+    length = len(times)
+
+    R = [0, 0, r]
+    average = 0
+
+    runningAverage = np.empty((length, 1))
+    norms = np.empty((length, 1))
+
+    for i in range(0, length):
+        norms[i] = np.linalg.norm(points[i] - R)
+        average += norms[i]
+        runningAverage[i] = average / (i + 1)
+
+        return t, x, y, z, runningAverage
+        # return t, x, y, z, times, points, runningAverage, norms
 
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# ax = fig.add_subplot(111, projection='3d')
 
 
 R = 10000
-# random.seed(5)
-for i in range(500):
+random.seed(5)
+
+#N = 100
+#averages = np.empty((N, 1))
+#indices = np.empty((N, 1))
+
+f = open("data.txt", "a+")
+i = 0
+while True:
+    #indices[i] = i
+    i += 1
+
     x0 = random.uniform(-R, R)
     y0 = random.uniform(-R, R)
     z0 = random.uniform(-R, R)
-    print("Running")
-    t, x, y, z, times, points, N = integrate(x0, y0, z0)
+    # t, x, y, z, times, points, runningAverage, norms = process(
+    #    x0, y0, z0)
 
-    if N > 28:
-        print("Plotting")
-        ax.plot(points[:, 0], points[:, 1], points[:, 2])
+    t, x, y, z, runningAverage = process(
+        x0, y0, z0)
 
+    #averages[i] = runningAverage
+
+    s = "{0} {1} {2} {3} {4}".format(i+1, x0, y0, z0, runningAverage)
+    print(s)
+    f.write(s + "\n")
+    f.flush()
+    # if runningAverage[-1] > r:
+    # print("Plotting")
+    # plt.plot(times, runningAverage)
+
+    # plt.plot(times, norms)
+
+    # if not isInside:
+    # ax.plot(points[:, 0], points[:, 1], points[:, 2])
+
+plt.plot(indices, averages)
 plt.show()
