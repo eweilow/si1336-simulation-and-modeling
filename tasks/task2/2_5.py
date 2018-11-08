@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.signal as sp
 
-T = 100
+T = 150
 
 
 def integrate(x0, y0, z0):
@@ -63,8 +63,20 @@ peakTimes = t[peaks]
 peakValues = z[peaks]
 
 plt.figure()
-#plt.plot(peakTimes, peakValues)
-plt.xlim((1, T))
-plt.ylim((-0.05, 0.05))
-plt.plot(t, np.log(z / np.roll(z, 1)))
-plt.show()
+# plt.plot(peakTimes, peakValues)
+plt.plot(t, z)
+plt.plot(peakTimes, peakValues)
+plt.xlabel("t")
+plt.figlegend(('z(t)', '$z_m$'))
+plt.savefig("./plots/2_5/study.png")
+
+plt.figure()
+# plt.plot(peakTimes, peakValues)
+
+times = peakTimes[:-1]
+rolling = np.roll(peakValues, -1)[:-1] / peakValues[:-1]
+print(times, rolling)
+plt.plot(times, rolling)
+plt.xlabel("t")
+plt.ylabel("$\\frac{z_{m+1}}{z_m}$")
+plt.savefig("./plots/2_5/peaks.png")
