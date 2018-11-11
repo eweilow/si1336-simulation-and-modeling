@@ -56,19 +56,25 @@ $$
 \lambda = \frac{1}{n} \sum_{i=0}^{i=n-1}{\text{log}\left| \frac{\Delta x_{i+1}}{\Delta x_i}\right|}
 $$
 
-\begin{multicols}{2}
+This can be done numerically by solving the system, for many values of $r$.
 
 \subsection*{The Lyapunov exponent for a population model}
 \singlefigure{./plots/2_2/study.png}
 We see that for $0.76 < r < r_\infty$, when the system isn't chaotic, the sign of $\lambda$ is positive.
 Effects of rounding doesn't affect $\lambda$ unless $r > r_\infty$.
-\columnbreak
 
 \subsection*{The dependence on initial value}
-\singlefigure{./plots/2_2/dependence.png}
-In this plot, we see that selecting different $x_0$ has little to no effect on the calculation of $\lambda$.
-
-\end{multicols}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.8\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{./plots/2_2/dependence.png}
+  \end{minipage}
+\end{figure}
+In this plot, we see that selecting different $x_0$ has an effect on the calculation of $\lambda$.
+For $r < 0.76$, it's clear that the system is non-chaotic since $\lambda$ is strictly equal to 0.
+For approximately $0.76 < r < 0.87$, $\lambda$ is either positive or negative depending on the initial value.
+It then takes on many values, incredibly dependent on $x_0$.
 
 \section*{2.3}
 
@@ -89,15 +95,19 @@ $$
 25 CPU hours later, for a time step of $\Delta t = 0.00008$ and a time boundary of $0 < t < 150$, the following histogram can be plotted:
 \singlefigure{./plots/2_3/histo.png}
 
-It shows that for all (roughly 1000) computed trajectories, they all average to within a distance 60 from $x = 0, y = 0, z = 0$.
+It shows that for all (roughly 2500) computed trajectories, they all average to within a distance 60 from $x = 0, y = 0, z = 0$.
 We can thus conclude that it's very unlikely that a solution doesn't get attracted into the basin.
 
+It's also interesting to note that the distribution is starting to look like a normal distribution. This could be investigated further in the future and left as an excercise for the reader. 
 \section*{2.4}
 
 \subsection*{Sensitivity to initial values}
 \doublefigure{./plots/2_4/solution.png}{./plots/2_4/difference.png}
 
+The right plot shows the "distance" between the solutions at each time $t$.
 It can be seen that even for a small difference in initial value ($0.01$), the solutions differ much after some time.
+
+\newpage
 
 
 \section*{2.5}
