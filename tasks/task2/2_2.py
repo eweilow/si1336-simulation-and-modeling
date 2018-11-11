@@ -5,7 +5,7 @@ from task_2_1 import run
 
 
 def sum(r, x0, round):
-    r, vals = run(r, 0.5, round)
+    r, vals = run(r, x0, round)
 
     summed = 0
     for i in range(20, len(vals) - 1):
@@ -30,11 +30,13 @@ plt.xlabel("r")
 plt.ylabel("$\lambda$")
 plt.savefig("./plots/2_2/study.png")
 
+legendLabels = []
 plt.figure()
-runFor(0.25, False)
-runFor(0.5, False)
-runFor(0.75, False)
-plt.figlegend(('$x_0 = 0.25$', '$x_0 = 0.5$', '$x_0 = 0.75$'))
+for x0 in np.linspace(0, 1, 50):
+    runFor(x0, False)
+    legendLabels.append("$x_0 = {0:.2f}$".format(x0))
 plt.xlabel("r")
 plt.ylabel("$\lambda$")
-plt.savefig("./plots/2_2/dependence.png")
+plt.figlegend(legendLabels)
+plt.subplots_adjust(left=0.15, right=0.8, top=0.9, bottom=0.1)
+plt.savefig("./plots/2_2/dependence.png", dpi=160, bbox_inches="tight")
