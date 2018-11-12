@@ -102,3 +102,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+node_modules/
+package-lock.json
+
+*.synctex.gz
+*.aux
+*.fdb_latexmk
+*.fls
+__latexindent_temp.tex

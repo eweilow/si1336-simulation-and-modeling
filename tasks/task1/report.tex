@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\usepackage[cm]{fullpage}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+
+\title{S1336 - Project 1}%replace with the appropriate homework number
+\author{Erik Weilow} %if necessary, replace with your course title
+
+\newcommand{\triplefigure}[3]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#3}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlefigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
+
+\begin{document}
+\maketitle
+\newpage
+
+\section*{1.1}
+
+In this section, the plots for the general solutions are integrated using Velocity Verlet. As will be shown later, both Runge Kutta and regular Euler produces solutions that aren't energy preserving.
+
+\subsection*{Pendulums vs harmonic oscillators}
+\triplefigure{./plots/1_1/comparison_1.png}{./plots/1_1/comparison_2.png}{./plots/1_1/comparison_3.png}
+In this first part, it can be seen that a numerical solution for a pendulum has longer period than for that of a harmonic oscillator.
+Increasing the initial angle increases the amplitude of oscillations.
+
+\subsection*{Pendulums: general solution}
+\triplefigure{./plots/1_1/sol_pendulum_1.png}{./plots/1_1/sol_pendulum_2.png}{./plots/1_1/sol_pendulum_3.png}
+It can be seen that the solution doesn't scale linearly with increased starting angle. 
+
+\subsection*{Harmonic oscillators: general solution}
+\triplefigure{./plots/1_1/sol_harmonic_1.png}{./plots/1_1/sol_harmonic_2.png}{./plots/1_1/sol_harmonic_3.png}
+More or less the same result as for a pendulum, though with a slightly shorter period as previously shown. 
+
+\subsection*{Rolling mean of energy for pendulum}
+\triplefigure{./plots/1_1/rollingMean_1.png}{./plots/1_1/rollingMean_2.png}{./plots/1_1/rollingMean_3.png}
+We can't even see the simulation using Euler in this plot - it shot right up within mere seconds.
+Runge Kutta becomes "good" on timescales on the order of 1000 seconds for $\Delta t \approx 0.01$.
+For longer timescales, we need a smaller $\Delta t$.
+
+Both Euler-Cromer and Velocity Verlet have energies that oscillate fast enough to cause aliasing effects (hence why the rolling average of those are a solid block of color).
+
+\subsection*{Rolling mean of energy for harmonic oscillator}
+\triplefigure{./plots/1_1/rollingMean_harmonic_1.png}{./plots/1_1/rollingMean_harmonic_2.png}{./plots/1_1/rollingMean_harmonic_3.png}
+For the harmonic oscillator, we get basically the same results as for the pendulum but the energies oscillate less for Euler-Cromer and Velocity Verlet.
+
+\subsection*{Harmonic oscillators: Numerical vs analytic}
+\triplefigure{./plots/1_1/comparison_numanalytic_1.png}{./plots/1_1/comparison_numanalytic_2.png}{./plots/1_1/comparison_numanalytic_3.png}
+In these plot, the ratio between the analytic and numerical solution is plotted over time:
+$$
+\frac{1 + \|\text{analytic}(t)\|}{1 + \|\text{numerical}(t)\|}
+$$
+Using Velocity-Verlet integration we can see aliasing effects (indicative of inequal periods), but the energy is stable as shown previously, so the numerical integration is still stable.
+
+\section*{1.2}
+\singlefigure{./plots/1_2/period.png}
+Harmonic oscillator has constant period, smaller than pendulum for all but the minimal initial values.
+The perturbation series gives a good match for the period of a harmonic oscillator, even if stopping at the sixth power.
+
+\section*{1.3}
+
+\subsection*{Dampened harmonic oscillator}
+\triplefigure{./plots/1_3/dampened_dx.png}{./plots/1_3/dampened_E.png}{./plots/1_3/dampened_x.png}
+The middle plot shows energy as function of time, in which it's clear that the dampening also decreases energy of the oscillator over time.
+
+From the leftmost figure we see that the velocity of the dampened oscillator decreases with time. A larger $\gamma$ results in shorter relaxation time.
+
+The rightmost plot shows the position of the dampened oscillator over time and it's clear from there as well that higher $\gamma$ results in shorter relaxation time.
+
+A thing to note is that from the selected values of $\gamma$ as well as the chosen initial conditions, the oscillations share more or less the same frequency.
+
+\pagebreak
+\begin{multicols}{2}
+\subsection*{Relaxation time as function of $\gamma$}
+\singlefigure{./plots/1_3/study.png}
+To find relaxation time, I fit the exponential $f(t) = A e^{-Bt}$ to local peaks of the numerical simulation.
+After finding values for $A$ and $B$, the relaxation time becomes $t_r = \frac{1}{B}$. The result is shown in the plot above.
+
+The drop to exactly 0 around $\gamma\approx 5.9$ is exactly when the oscillator becomes critically dampened, as we only have one local maxima (the initial value) for such a system, and cannot fit the above mentioned exponential (that has two parameters) to a function with a single maximum. 
+\columnbreak
+\subsection*{Minimum x as function of $\gamma$}
+\singlefigure{./plots/1_3/study_2.png}
+This plot shows the minimum values of $\theta (t)$ over time for different $\gamma$. Just like in the previous section, we can conclude that the system becomes critically dampened around $\gamma \approx 5.9$ (even though it's harder to find the exact value in this plot).
+\end{multicols}
+
+\section*{1.4}
+\subsection*{Phase space portrait of dampened pendulum}
+\singlefigure{./plots/1_4/study.png}
+What this phase space portrait shows us is that the oscillations will eventually die out, because the spiral converges towards $\theta(t_\infty) = 0$, $\theta'(t_\infty) = 0$.
+
+\pagebreak
+\section*{1.5}
+\begin{multicols}{2}
+  \subsection*{Energy average}
+  \singlefigure{./plots/1_5/study.png}
+  We see here that both the Leapfrog method and Velocity Verlet are energy preserving methods over long time, even for a relatively large time step as $\Delta t = 0.25$.
+  \columnbreak
+  \subsection*{Trajectories}
+  \singlefigure{./plots/1_5/study2.png}
+  Leapfrog produces different trajectory than Velocity Verlet, which is interesting to note.
+\end{multicols}
+
+% ![](./plots/1_1/comparison_1.png)
+% ![](./plots/1_1/comparison_2.png)
+% ![](./plots/1_1/comparison_3.png)
+\end{document}

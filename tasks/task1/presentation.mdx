@@ -1,0 +1,132 @@
+import { Tex, InlineTex } from 'react-tex';
+export { default as theme } from './theme'
+
+# SI1336 - Project 1
+## E. Weilow
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css" integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML" crossOrigin="anonymous"/>
+
+---
+
+## 1.1 - Pendulums vs harmonic oscillators
+
+![](./plots/1_1/comparison_1.png)
+![](./plots/1_1/comparison_2.png)
+![](./plots/1_1/comparison_3.png)
+
+Using Velocity Verlet: Pendulum has slightly longer period.
+
+---
+
+## 1.1 - Pendulums: general solution
+
+![](./plots/1_1/sol_pendulum_1.png)
+![](./plots/1_1/sol_pendulum_2.png)
+![](./plots/1_1/sol_pendulum_3.png)
+
+Using Velocity Verlet: Energy doesn't scale linearly with increased starting angle.
+
+
+---
+
+## 1.1 - Harmonic oscillators: general solutions
+
+![](./plots/1_1/sol_harmonic_1.png)
+![](./plots/1_1/sol_harmonic_2.png)
+![](./plots/1_1/sol_harmonic_3.png)
+
+Using Velocity Verlet: Basically the same solutions as for pendulums. 
+
+---
+
+## 1.1 - Rolling mean of energy for pendulum
+![](./plots/1_1/rollingMean_1.png)
+![](./plots/1_1/rollingMean_2.png)
+![](./plots/1_1/rollingMean_3.png)
+
+<p>
+Euler takes off immediately... Runge Kutta becomes "good" for{" "}
+<InlineTex texContent={"$$\\Delta t \\approx 0.01$$"}/>
+</p>
+---
+
+## 1.1 - Rolling mean of energy for harmonic oscillator
+![](./plots/1_1/rollingMean_harmonic_1.png)
+![](./plots/1_1/rollingMean_harmonic_2.png)
+![](./plots/1_1/rollingMean_harmonic_3.png)
+
+Same result as for pendulum, expected since period is almost same.
+
+---
+
+## 1.1 - Harmonic oscillators: Numerical vs analytic
+
+![](./plots/1_1/comparison_numanalytic_1.png)
+![](./plots/1_1/comparison_numanalytic_2.png)
+![](./plots/1_1/comparison_numanalytic_3.png)
+
+Using Velocity Verlet: sees a drift in period, but the numerical integration is stable.
+
+---
+
+## 1.2 Period time as function of initial position
+![](./plots/1_2/period.png)
+
+Harmonic oscillator has constant period, smaller than pendulum.
+The perturbation series does not approximate the harmonic oscillator well.
+
+---
+
+## 1.3 Dampened harmonic oscillator
+
+![](./plots/1_3/dampened_dx.png)
+![](./plots/1_3/dampened_E.png)
+![](./plots/1_3/dampened_x.png)
+
+Energy decreases over time with dampening.
+
+---
+
+## 1.3 Relaxation time as function of γ
+![](./plots/1_3/study.png)
+
+<p>
+Method: fit{" "}
+<InlineTex texContent={"$$f(t) = A e^{-Bt}$$"}/>
+{" "}to local peaks of simulated oscillations.
+</p>
+<p>
+For critical dampening{" "}
+<InlineTex texContent={"$$\\gamma_c \\approx 5.9$$"}/>
+{" "}, only 1 peak x(0) exists and f(t) cannot be fit.
+</p>
+
+---
+
+## 1.3 Minimum x as function of γ
+![](./plots/1_3/study_2.png)
+
+---
+
+## 1.4 Phase space portrait of dampened pendulum
+![](./plots/1_4/study.png)
+
+We get a spiral in phase space, that creeps towards (0, 0).
+
+---
+
+## 1.5 Leapfrog vs Velocity Verlet
+![](./plots/1_5/study.png)
+
+Both are energy preserving over long time, even for silly large time steps.
+
+---
+
+## 1.5 Leapfrog vs Velocity Verlet
+![](./plots/1_5/study2.png)
+
+Leapfrog produces different trajectory.
+
+---
+
+## 1.5 Leapfrog vs Velocity Verlet
+Main advantage to leapfrog: only have to calculate acceleration once per time step.
