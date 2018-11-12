@@ -109,6 +109,6 @@ def runForParticleCount(
     print("Completed {0}".format(particleCount))
 
 
-runForParticleCount(80, bins=20)
-runForParticleCount(64, bins=16)
+runForParticleCount(80, bins=21)
+runForParticleCount(64, bins=17)
 runForParticleCount(8, bins=np.linspace(-0.5, 8.5, 10))
