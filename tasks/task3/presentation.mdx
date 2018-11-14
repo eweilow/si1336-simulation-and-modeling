@@ -1,0 +1,122 @@
+import { Tex, InlineTex } from "react-tex";
+export { default as theme } from "../theme";
+
+# SI1336 - Project 3
+
+## E. Weilow
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css"
+  integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML"
+  crossOrigin="anonymous"
+/>
+
+---
+
+## 3.1 Particle in a box
+
+---
+
+## 3.1 - 8 particles
+
+![](./plots/3_1/8_histogram.png)
+
+![](./plots/3_1/8_study.png)
+
+![](./plots/3_1/8_study_mean.png)
+
+---
+
+## 3.1 - 64 particles
+
+![](./plots/3_1/64_histogram.png)
+
+![](./plots/3_1/64_study.png)
+
+![](./plots/3_1/64_study_mean.png)
+
+---
+
+## 3.1 - 80 particles
+
+![](./plots/3_1/80_histogram.png)
+
+![](./plots/3_1/80_study.png)
+
+![](./plots/3_1/80_study_mean.png)
+
+---
+
+## 3.1 - equilibrium?
+
+Let's define equilibrium as a steady time average.
+
+---
+
+## 3.1 - equilibrium?
+
+![](./plots/3_1/8_study_mean.png)
+
+![](./plots/3_1/64_study_mean.png)
+
+![](./plots/3_1/80_study_mean.png)
+
+It's pretty conclusive that equilibrium is particles evenly split between both left and right.
+
+---
+
+## 3.1 - equilibrium?
+
+![](./plots/3_1/8_histogram.png)
+
+![](./plots/3_1/64_histogram.png)
+
+![](./plots/3_1/80_histogram.png)
+
+Even clearer when looking at histograms of end values for all simulations.
+
+---
+
+## 3.1 - equilibrium?
+
+![](./plots/3_1/80_study.png)
+
+The number of particles fluctuate even when at an "equilibrium", even though average is steady.
+
+---
+
+## 3.2 - deterministic time dependence of n
+
+The qualitive behavior of n(t) is that it tends to half of N, with random fluctuations.
+
+---
+
+## 3.3 Effects of seeding
+
+![](./plots/3_3/8_study.png)
+
+![](./plots/3_3/64_study.png)
+
+![](./plots/3_3/80_study.png)
+
+The first simulation doesn't at first glance appear to have much different behaviour.
+
+---
+
+## 3.3 Effects of seeding
+
+![](./plots/3_3/8_histogram.png)
+
+![](./plots/3_3/64_histogram.png)
+
+![](./plots/3_3/80_histogram.png)
+
+The histograms tell another story...
+
+---
+
+## 3.3 Effects of seeding
+
+... because all the simulations are run with the same seed.
+They are all the same!
