@@ -91,7 +91,7 @@ plt.plot(manyIndices, manySimsFluctuations)
 plt.plot([0, np.amax(manyIndices)], [20, 20], linestyle='--')
 plt.title('Many simulations (80 particles)', loc="left")
 plt.figlegend(('Computed $\Delta n^2$', '$\Delta n^2$ = 20'))
-plt.xlabel('step')
+plt.xlabel('simulation #')
 plt.ylabel('$\Delta n^2$')
 plt.savefig("./plots/3_4/many.png", dpi=160)
 

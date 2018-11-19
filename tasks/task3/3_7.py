@@ -58,9 +58,9 @@ runSavePlot(1, 3, 4, 128)
 runSavePlot(1, 3, 4, 129)
 runSavePlot(1, 3, 4, 130)
 
-runSavePlot(1, 3, 4, 128)
 runSavePlot(1, 4, 4, 128)
 runSavePlot(1, 5, 4, 128)
+runSavePlot(1, 6, 4, 128)
 
 runSavePlot(1, 3, 5, 128)
 runSavePlot(1, 3, 6, 128)
