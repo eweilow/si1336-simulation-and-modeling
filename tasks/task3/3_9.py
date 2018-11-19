@@ -66,7 +66,7 @@ def runUntilWorks(steps, preventBackfire):
 
 
 print("Plotting sample solutions")
-for i in range(5, 40, 5):
+for i in range(5, 55, 5):
     plt.figure()
     plt.title("{0} steps, non intersecting".format(i))
     (X, Y, indices), stepsRun = runUntilWorks(i, True)
