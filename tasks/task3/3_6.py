@@ -36,32 +36,6 @@ def runRandomWalk(steps):
     return X, Y, np.array(indices)
 
 
-# , Y = runRandomWalk(1000)
-# lt.figure()
-#lt.plot(X, Y)
-# lt.savefig("./plots/3_6/randomwalk_1000.png")
-#
-# , Y = runRandomWalk(100)
-# lt.figure()
-#lt.plot(X, Y)
-# lt.savefig("./plots/3_6/randomwalk_100.png")
-#
-#X, Y = runRandomWalk(10)
-#fig, axs = plt.subplots()
-#points = np.array([X, Y]).T.reshape(-1, 1, 2)
-#segments = np.concatenate([points[:-1], points[1:]], axis=1)
-#
-#norm = plt.Normalize(0, 10)
-#lc = LineCollection(segments, cmap='viridis', norm=norm)
-# Set the values used for colormapping
-#lc.set_array(np.array(range(0, 10)))
-# lc.set_linewidth(2)
-#line = axs.add_collection(lc)
-#fig.colorbar(line, ax=axs)
-#
-# plt.savefig("./plots/3_6/randomwalk_10.png")
-#
-
 plt.figure()
 plt.title("1000 steps")
 X, Y, indices = runRandomWalk(1000)
