@@ -44,20 +44,28 @@ def runRandomWalk(steps, r0, a, c, m):
     return X, Y, np.array(indices)
 
 
-plt.figure()
-plt.title("1000 steps")
-X, Y, indices = runRandomWalk(1000, 1, 3, 4, 128)
-plotGradientLine(X, Y, indices)
-plt.savefig("./plots/3_7/randomwalk_1000_128.png")
+def runSavePlot(r0, a, c, m):
+    plt.figure()
+    plt.title(
+        "1000 steps (r = {0}, a = {1}, c = {2}, m = {3})".format(r0, a, c, m))
+    X, Y, indices = runRandomWalk(1000, r0, a, c, m)
+    plotGradientLine(X, Y, indices)
+    plt.savefig(
+        "./plots/3_7/randomwalk_1000_r{0}_a{1}_c{2}_m{3}.png".format(r0, a, c, m))
 
-plt.figure()
-plt.title("1000 steps")
-X, Y, indices = runRandomWalk(1000, 1, 3, 4, 129)
-plotGradientLine(X, Y, indices)
-plt.savefig("./plots/3_7/randomwalk_1000_129.png")
 
-plt.figure()
-plt.title("1000 steps")
-X, Y, indices = runRandomWalk(1000, 1, 3, 4, 130)
-plotGradientLine(X, Y, indices)
-plt.savefig("./plots/3_7/randomwalk_1000_130.png")
+runSavePlot(1, 3, 4, 128)
+runSavePlot(1, 3, 4, 129)
+runSavePlot(1, 3, 4, 130)
+
+runSavePlot(1, 3, 4, 128)
+runSavePlot(1, 4, 4, 128)
+runSavePlot(1, 5, 4, 128)
+
+runSavePlot(1, 3, 5, 128)
+runSavePlot(1, 3, 6, 128)
+runSavePlot(1, 3, 7, 128)
+
+runSavePlot(1, 3, 4, 128)
+runSavePlot(2, 3, 4, 128)
+runSavePlot(3, 3, 4, 128)

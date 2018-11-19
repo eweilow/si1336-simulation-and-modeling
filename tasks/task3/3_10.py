@@ -90,9 +90,9 @@ def runWithChoice(simLength, canIntersect, preventBackfire):
         # print(summedSquares)
 
     fig = plt.figure()
-    plt.title(
-        "With back-step protection" if preventBackfire else "Without back-step protection")
     ax = plt.axes(projection='3d')
+    ax.set_title(
+        "With back-step protection" if preventBackfire else "Without back-step protection")
     ax.plot_surface(X, Y, Z,
                     cmap='rainbow', edgecolor='none')
     ax.set_xlabel('walk length')
@@ -100,7 +100,7 @@ def runWithChoice(simLength, canIntersect, preventBackfire):
     ax.set_zlabel('$<R^2>$')
     ax.view_init(30, 135 + 90)
     plt.savefig("./plots/3_10/walklen_{0}.png".format(
-                "with" if preventBackfire else "without"))
+                "with" if preventBackfire else "without"), dpi=160)
 
 
 runWithChoice(50, False, True)

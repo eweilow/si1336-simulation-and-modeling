@@ -120,3 +120,142 @@ The histograms tell another story...
 
 ... because all the simulations are run with the same seed.
 They are all the same!
+
+---
+
+## 3.4 Equilibrium fluctuations
+
+![](./plots/3_4/comparison.png)
+
+![](./plots/3_4/many.png)
+
+![](./plots/3_4/single.png)
+
+Can see that computing from many simulations stabilize on a value faster
+
+---
+
+## 3.5 Equilibrium
+
+![](./plots/3_5/comparison.png)
+
+![](./plots/3_5/many.png)
+
+![](./plots/3_5/single.png)
+
+The average \<n\> for many simulations becomes stable at 40, which to me is the expected value.
+
+---
+
+## 3.5 Equilibrium
+
+![](./plots/3_5/comparison.png)
+
+![](./plots/3_1/80_histogram.png)
+
+This is also shown in 3.1, as the center of the histogram is 40.
+
+---
+
+## 3.6 Random walks!
+
+![](./plots/3_6/randomwalk_10.png)
+
+![](./plots/3_6/randomwalk_100.png)
+
+![](./plots/3_6/randomwalk_1000.png)
+
+---
+
+## 3.7 Custom random number generator
+
+### Varying r
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c4_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r2_a3_c4_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r3_a3_c4_m128.png)
+
+Not that great, it forms patterns...
+
+---
+
+## 3.7 Custom random number generator
+
+### Varying m
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c4_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c4_m129.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c4_m130.png)
+
+Not that great, it forms patterns...
+
+---
+
+## 3.7 Custom random number generator
+
+### Varying a & c
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c4_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a4_c4_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a5_c4_m128.png)
+
+<br />
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c5_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c6_m128.png)
+
+![](./plots/3_7/randomwalk_1000_r1_a3_c7_m128.png)
+
+---
+
+## 3.8 End-to-end distance
+
+![](./plots/3_8/walklen.png)
+
+Turns out that <i>\<R<sup>2</sup>\> ≈ walk length</i>
+
+---
+
+## 3.9 Self intersection prevention
+
+![](./plots/3_9/randomwalk_15.png)
+
+![](./plots/3_9/randomwalk_25.png)
+
+![](./plots/3_9/randomwalk_50.png)
+
+Some samples
+
+---
+
+## 3.9 Self intersection prevention
+
+![](./plots/3_9/success_fraction.png)
+
+Can double the walk length if we prevent walks from returning in the same direction as previous step,
+while still keeping the same success ratio ...
+
+---
+
+## 3.9 Self intersection prevention
+
+![](./plots/3_9/per_success.png)
+
+... but the attempts per successful non-self-intersecting walk is MUCH less for walks with back-move protection.
+
+---
+
+## 3.10 Self intersection prevention
+
+![](./plots/3_10/walklen_with.png)
+
+![](./plots/3_10/walklen_without.png)
+
+Can get much further on average by preventing back-moves.

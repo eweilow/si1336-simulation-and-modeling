@@ -58,27 +58,28 @@ plt.figure()
 
 singleIndices, singleSimFluctuation = getSquareFluctuations(
     singlevals, 0, 1)
-plt.plot(singleIndices / np.max(singleIndices), singleSimFluctuation)
+lengthSingle = np.amax(singleIndices)
+plt.plot(singleIndices, singleSimFluctuation)
 
 singleIndices, singleSimFluctuation = getSquareFluctuations(
     singlevals, 1/4, 1)
-plt.plot(singleIndices / np.max(singleIndices), singleSimFluctuation)
+plt.plot(singleIndices, singleSimFluctuation)
 
 singleIndices, singleSimFluctuation = getSquareFluctuations(
     singlevals, 2/4, 1)
-plt.plot(singleIndices / np.max(singleIndices), singleSimFluctuation)
+plt.plot(singleIndices, singleSimFluctuation)
 
 singleIndices, singleSimFluctuation = getSquareFluctuations(
     singlevals, 3/4, 1)
-plt.plot(singleIndices / np.max(singleIndices), singleSimFluctuation)
+plt.plot(singleIndices, singleSimFluctuation)
 
-plt.plot([0, 1], [20, 20], linestyle='--')
+plt.plot([0, lengthSingle], [20, 20], linestyle='--')
 
 plt.figlegend(('[0, 1]', '[0.25, 1]', '[0.5, 1]',
                '[0.75, 1]', '$\Delta n^2$ = 20'))
 plt.title(
-    '$\Delta n^2$ on range, single simulation (80 particles)')
-plt.xlabel('normalized step')
+    '$\Delta n^2$ on range, single simulation (80 particles)', loc="left")
+plt.xlabel('step')
 plt.ylabel('$\Delta n^2$')
 plt.savefig("./plots/3_4/single.png", dpi=160)
 
@@ -86,11 +87,11 @@ manyIndices, manySimsFluctuations = getSquareFluctuations(vals)
 singleIndices, singleSimFluctuation = getSquareFluctuations(singlevals)
 
 plt.figure()
-plt.plot(manyIndices / np.max(manyIndices), manySimsFluctuations)
-plt.plot([0, 1], [20, 20], linestyle='--')
-plt.title('Many simulations (80 particles)')
+plt.plot(manyIndices, manySimsFluctuations)
+plt.plot([0, np.amax(manyIndices)], [20, 20], linestyle='--')
+plt.title('Many simulations (80 particles)', loc="left")
 plt.figlegend(('Computed $\Delta n^2$', '$\Delta n^2$ = 20'))
-plt.xlabel('normalized step')
+plt.xlabel('step')
 plt.ylabel('$\Delta n^2$')
 plt.savefig("./plots/3_4/many.png", dpi=160)
 
@@ -99,8 +100,10 @@ plt.figure()
 
 plt.plot(manyIndices / np.max(manyIndices), manySimsFluctuations)
 plt.plot(singleIndices / np.max(singleIndices), singleSimFluctuation)
-plt.title('Comparing (80 particles)')
+plt.title('Comparing (80 particles)', loc="left")
 plt.xlabel('normalized x')
 plt.ylabel('$\Delta n^2$')
-plt.figlegend(('Many simulations', 'Single simulation'))
+plt.figlegend(('Many simulations ({0})'.format(
+    np.amax(manyIndices)), 'Single simulation ({0} steps)'.format(
+    np.amax(singleIndices))))
 plt.savefig("./plots/3_4/comparison.png", dpi=160)
