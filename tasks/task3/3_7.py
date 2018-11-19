@@ -49,6 +49,7 @@ plt.title("1000 steps")
 X, Y, indices = runRandomWalk(1000, 1, 3, 4, 128)
 plotGradientLine(X, Y, indices)
 plt.savefig("./plots/3_7/randomwalk_1000_128.png")
+
 plt.figure()
 plt.title("1000 steps")
 X, Y, indices = runRandomWalk(1000, 1, 3, 4, 129)

@@ -10,7 +10,7 @@ def plotGradientLine(X, Y, indices):
 
     cmap = plt.get_cmap('rainbow')
     lc = LineCollection(segments, cmap=cmap,
-                        norm=plt.Normalize(indices[0], indices[len(indices)-1]))
+                        norm=plt.Normalize(indices[0], indices[-1]))
     lc.set_array(indices)
     lc.set_linewidth(2)
 
