@@ -52,6 +52,15 @@
   \end{minipage}
 \end{figure}
 }
+\newcommand{\singlewiderfigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.65\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
 
 \begin{document}
 \maketitle
@@ -155,6 +164,26 @@ Other parameters can be varied, generating the following walks:
 \triplefigure{./plots/3_7/randomwalk_1000_r1_a3_c5_m128.png}{./plots/3_7/randomwalk_1000_r1_a3_c6_m128.png}{./plots/3_7/randomwalk_1000_r1_a3_c7_m128.png}
 
 \subsection*{3.8}
-\singlefigure{./plots/3_8/walklen.png}
+\singlewiderfigure{./plots/3_8/walklen.png}
+
+I found this way of visualizing walk length against $<R^2>$ to be quite effective. 
+It captures both walk length against $<R^2>$, but also how $<R^2>$ tends with increased number of walks.
+
+\subsection*{3.9}
+When we have such stringent requirements of a non-self-intersecting random walk, it must be verified that the algorithm works:
+\triplefigure{./plots/3_9/randomwalk_15.png}{./plots/3_9/randomwalk_25.png}{./plots/3_9/randomwalk_50.png}
+
+Looking at the success fraction, it's clear that the method of not going back the same direction as the direction each step came from improves a bit:
+\singlefigure{./plots/3_9/success_fraction.png}
+Instead of tending to 0 around a walk length of 20, more than double the walk length can be done before reaching the same low success fraction.
+
+I feel that this plot is a bad way of showing just how much better the back-move protection is. Instead we can look at the average number of self-interesecting walks per non-self-intersecting walk:
+\singlefigure{./plots/3_9/per_success.png}
+
+The pure random walk basically becomes insanely hard to find solutions for with a walk length of much more than 20-30, but the method where the walk doesn't return in the same direction is \textit{MUCH} better.
+
+\subsection*{3.10}
+\doublefigure{./plots/3_10/walklen_with.png}{./plots/3_10/walklen_without.png}
+These plots share the same structure as the plot in section 3.8. It's clear that back-step protection (the right plot) sees $<R^2>$ only a fifth of the walks without back-step protection.
 
 \end{document}
