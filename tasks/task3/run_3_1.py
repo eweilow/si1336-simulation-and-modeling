@@ -34,12 +34,12 @@ def runForParticleCount(
     # Seed the random generator
     # rnd.seed()
 
-    simulationCount = 2000000
+    simulationCount = 1
     numberOfSteps = 7500
 
     f = open("./data/{1}/{0}_data.txt".format(particleCount, prefix), "a+")
 
-    def runSimulation(doPlot=False):
+    def runSimulation(stepCount, plotRange, doPlot=False):
         if(seed):
             rnd.seed(1)
         stepIndices = []
@@ -49,7 +49,7 @@ def runForParticleCount(
         # Initial number of particles on the left side
         particlesInLeft = particleCount
 
-        for step in range(numberOfSteps):
+        for step in range(stepCount):
 
             if doPlot:
                 stepIndices.append(step)
@@ -72,9 +72,10 @@ def runForParticleCount(
             plt.xlabel('Time')
             plt.ylabel('Particles')
             plt.title('Simulation 0 ({0} particles)'.format(particleCount))
+            plt.xlim([0, plotRange])
             plt.plot(stepIndices, stepParticlesInLeft)
             plt.plot(stepIndices, stepParticlesInRight)
-            plt.plot([0, numberOfSteps], [
+            plt.plot([0, stepCount], [
                      particleCount // 2, particleCount // 2], '--')
             plt.figlegend(('Left', 'Right', 'N / 2'))
             plt.savefig(
@@ -84,9 +85,10 @@ def runForParticleCount(
             plt.xlabel('Time')
             plt.ylabel('Particles')
             plt.title('Simulation 0 ({0} particles)'.format(particleCount))
+            plt.xlim([0, plotRange])
             plt.plot(stepIndices, running_mean(stepParticlesInLeft))
             plt.plot(stepIndices, running_mean(stepParticlesInRight))
-            plt.plot([0, numberOfSteps], [
+            plt.plot([0, stepCount], [
                      particleCount // 2, particleCount // 2], '--')
             plt.figlegend(
                 ('Left (time average)', 'Right (time average)', 'N / 2'))
@@ -95,7 +97,7 @@ def runForParticleCount(
 
             finitial = open(
                 "./data/{1}/{0}_initial_data.txt".format(particleCount, prefix), "a+")
-            for i in range(numberOfSteps):
+            for i in range(stepCount):
                 finitial.write("{0} {1}\n".format(
                     stepParticlesInLeft[i], stepParticlesInRight[i]))
             finitial.close()
@@ -107,7 +109,8 @@ def runForParticleCount(
     for sim in range(simulationCount):
         if sim % 1000 == 0:
             print("{0:.2f}%".format(100 * sim / simulationCount))
-        (particlesLeft, particlesRight) = runSimulation(sim == 0)
+        (particlesLeft, particlesRight) = runSimulation(
+            numberOfSteps * 4 if sim == 0 else numberOfSteps, numberOfSteps, sim == 0)
         endSolutionsLeft.append(particlesLeft)
         endSolutionsRight.append(particlesRight)
 
