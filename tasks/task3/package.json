@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "mdx-deck presentation.mdx --width 1280 --height 720",
+    "export": "mdx-deck pdf presentation.mdx --width 2560 --height 1440 --out-file ./presentation.pdf"
+  },
+  "dependencies": {
+    "mdx-deck": "^1.7.7",
+    "react-tex": "^1.4.0"
+  }
+}
