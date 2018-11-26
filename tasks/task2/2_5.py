@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.signal as sp
 
-T = 5000
+T = 250
 
 
 def integrate(x0, y0, z0):
@@ -11,7 +11,7 @@ def integrate(x0, y0, z0):
     b = 8/3
     r = 28
 
-    dt = 0.0001
+    dt = 0.001
 
     t = 0
     X = np.array([x0, y0, z0])
@@ -81,6 +81,7 @@ nextPeaks = np.roll(peakValues, -1)[:-1]
 i = np.argmax(nextPeaks)
 c = currentPeaks[i]
 
+plt.figure()
 plt.plot([0, 50], [0, 50], 'c--')
 plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
 plt.plot([c, c], [0, 50], 'r--')
@@ -90,4 +91,32 @@ plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
 plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
 plt.xlabel("$z_m$")
 plt.ylabel("$z_{m+1}$")
-plt.savefig("./plots/2_5/peaks.png")
+# plt.savefig("./plots/2_5/peaks.png")
+
+currentPeaks = peakValues[:-2]
+nextPeaks = np.roll(peakValues, -2)[:-2]
+plt.figure()
+plt.plot([0, 50], [0, 50], 'c--')
+plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
+plt.plot([c, c], [0, 50], 'r--')
+plt.scatter(currentPeaks, nextPeaks, s=2)
+plt.figlegend(('_nolegend_', 'unity', '$z_m \\approx 38.5$', 'peaks'))
+plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
+plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
+plt.xlabel("$z_m$")
+plt.ylabel("$z_{m+2}$")
+plt.savefig("./plots/2_5/peaks2.png")
+
+currentPeaks = peakValues[:-3]
+nextPeaks = np.roll(peakValues, -3)[:-3]
+plt.figure()
+plt.plot([0, 50], [0, 50], 'c--')
+plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
+plt.plot([c, c], [0, 50], 'r--')
+plt.scatter(currentPeaks, nextPeaks, s=2)
+plt.figlegend(('_nolegend_', 'unity', '$z_m \\approx 38.5$', 'peaks'))
+plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
+plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
+plt.xlabel("$z_m$")
+plt.ylabel("$z_{m+3}$")
+plt.savefig("./plots/2_5/peaks3.png")
