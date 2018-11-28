@@ -56,23 +56,18 @@ fireProbabilities = np.linspace(0.1, 0.7, nvals)
 X, Y = np.meshgrid(growthProbabilities, fireProbabilities)
 Z = np.zeros_like(X)
 
-N = 8
+N = 1
 
+file = open("./4_5_data.txt", "a")
 for i in range(0, len(growthProbabilities)):
     for j in range(0, len(fireProbabilities)):
         for n in range(N):
             g = growthProbabilities[i]
             f = fireProbabilities[j]
             alpha = optimize(g, f)
+            str_output = "{0} {1} {2:8f} {3:8f} {4:8f}".format(
+                i, j, g, f, alpha)
+            file.write(str_output + "\n")
+            file.flush()
             Z[i, j] += alpha / N
-            print("{0:.2f} {1:.2f} {2:.2f}".format(g, f, alpha))
-
-plt.figure()
-fig, ax = plt.subplots()
-CS = ax.contour(X, Y, Z)
-ax.clabel(CS, inline=1, fontsize=10)
-ax.set_title('$\\alpha$ as function of growth and lightning strike probability')
-# plt.imshow(Z)
-ax.set_xlabel('Growth probability')
-ax.set_ylabel('Lightning strike probability')
-plt.savefig("./plots/4_5/parameters.png", dpi=200)
+            print(str_output)

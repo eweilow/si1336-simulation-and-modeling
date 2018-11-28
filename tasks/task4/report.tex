@@ -105,11 +105,15 @@ We can see that the simulation follows the rules.
 \subsection*{N(s) for $g = f = 10\%$}
 Running 1000 simulation iterations on a grid size of 40x40 gives us the following histogram of sizes of the trees that are lit on fire in each iteration:
 \singlewiderfigure{./plots/4_5/histogram.png}
-The distribution seems to follow $N s^{-\alpha}$ quite well, with parameters $N \approx 18147$ and $\alpha \approx -1.61$ shown in the above figure.
+The distribution seems to follow $N s^{-\alpha}$ quite well, with parameters $N \approx 18147$ and $\alpha \approx -1.61$ shown in the above figure acquired by fitting $N s^{-\alpha}$ to the histogram data.
 
 \subsection*{N(s) for many g, f}
-Every point in the two-dimensional interval $g \in [0.1, 0.5], f \in [0.1, 0.5]$ was averaged over 5 simulations to produce the following plot of $\alpha$ as a function of $g$ and $f$.
+Every point in the two-dimensional interval $g \in [0.1, 0.5], f \in [0.1, 0.5]$ was averaged over around 14 simulations 
+to produce the following plot of $\alpha$, acquired by fitting $N s^{-\alpha}$ to the histogram of each simulation, as a function of $g$ and $f$.
 \singlewiderfigure{./plots/4_5/parameters.png}
+It seems counterintuitive that increased growth probability would result in a smaller $\alpha$, as then $N(s)$ would grow smaller much faster.
+One would think that higher growth would lead to larger clusters, so $\alpha$ should be smaller, but that's not the result that can be seen above.
+
 
 
 \end{document}
