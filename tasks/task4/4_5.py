@@ -1,110 +1,78 @@
-import numpy as np
-import random as rnd
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
-
-import sys
-
-sys.setrecursionlimit(15000)
-
-gridSize = 40
-grid = np.zeros((gridSize, gridSize))
-nextGrid = np.zeros_like(grid)
-
-EMPTY = 0
-TREE = 1
-FIRE = 2
-
-growthProbability = 0.1
-lightningStrikeProbability = 0.1
+from mpl_toolkits import mplot3d
+import numpy as np
+from treeSim import treeSimulation
 
 
-spreadDirections = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+def optimize(g, f, name=False, save=False):
+    iterate, getFireCatched, getGrid = treeSimulation(40, g, f)
+
+    for i in range(450):
+        iterate()
+
+    n, bins = np.histogram(getFireCatched(), 25)
+
+    def func(x, a, b):
+        return b * x**a
+
+    optimizeX = 0.5 * (bins[1:] + bins[:-1])
+    optimizeY = n
+
+    try:
+        optimizedParameters, pcov = opt.curve_fit(
+            func, optimizeX, optimizeY, method='lm', maxfev=10000)
+    except:
+        optimizedParameters, pcov = opt.curve_fit(
+            func, optimizeX, optimizeY, method='lm', maxfev=1000000)
+
+    plotx = np.linspace(np.amin(bins), np.amax(bins), 100)
+
+    if save:
+        plt.figure()
+        plt.hist(getFireCatched(), 25)
+        plt.plot(plotx, func(
+            plotx, optimizedParameters[0], optimizedParameters[1]))
+
+        plt.xlabel("s")
+        plt.ylabel("N(s)")
+        plt.xlim((np.amin(bins), np.amax(bins)))
+        plt.ylim((0, np.amax(n)))
+        plt.title("g = {1:.2f}, f = {2:.2f},\n$\\alpha \\approx {0:.2f}$, $N \\approx {3:.0f}$".format(
+            optimizedParameters[0], g, f, optimizedParameters[1]), loc="left")
+        plt.figlegend(('$N s^{-\\alpha}$', 'Simulation histogram'))
+
+        plt.savefig("./plots/4_5/" + name, dpi=160)
+
+    return optimizedParameters[0]
 
 
-def spread(x, y, onType, toType):
-    for direction in spreadDirections:
-        nextX = (x + direction[0] + gridSize) % gridSize
-        nextY = (y + direction[1] + gridSize) % gridSize
+optimize(0.1, 0.1, "histogram.png", True)
 
-        if nextGrid[nextX, nextY] == onType:
-            nextGrid[nextX, nextY] = toType
-            spread(nextX, nextY, onType, toType)
+nvals = 10
+growthProbabilities = np.linspace(0.1, 0.5, nvals)
+fireProbabilities = np.linspace(0.1, 0.5, nvals)
 
+X, Y = np.meshgrid(growthProbabilities, fireProbabilities)
+Z = np.zeros_like(X)
 
-def uniqueConnected(x, y, visited, ofType):
-    if visited[x, y] == 1:
-        return 0
+N = 5
 
-    visited[x, y] = 1
+for i in range(0, len(growthProbabilities)):
+    for j in range(0, len(fireProbabilities)):
+        for n in range(N):
+            g = growthProbabilities[i]
+            f = fireProbabilities[j]
+            alpha = optimize(g, f)
+            Z[i, j] += alpha / N
+            print("{0:.2f} {1:.2f} {2:.2f}".format(g, f, alpha))
 
-    if not (grid[x, y] == ofType):
-        return 0
-
-    count = 1
-    for direction in spreadDirections:
-        nextX = (x + direction[0] + gridSize) % gridSize
-        nextY = (y + direction[1] + gridSize) % gridSize
-        count += uniqueConnected(nextX, nextY, visited, ofType)
-    return count
-
-
-fireCatched = []
-
-
-def iterate():
-    nextGrid[:, :] = grid[:, :]
-    for x in range(gridSize):
-        for y in range(gridSize):
-
-            if grid[x, y] == EMPTY and rnd.random() < growthProbability:
-                nextGrid[x, y] = TREE
-
-            if grid[x, y] == TREE and rnd.random() < lightningStrikeProbability:
-                nextGrid[x, y] = FIRE
-
-            if grid[x, y] == FIRE:
-                nextGrid[x, y] = EMPTY
-
-    for x in range(gridSize):
-        for y in range(gridSize):
-            if nextGrid[x, y] == FIRE:
-                spread(x, y, TREE, FIRE)
-
-    grid[:, :] = nextGrid[:, :]
-
-    visited = np.zeros_like(grid)
-    for x in range(gridSize):
-        for y in range(gridSize):
-            uniqueGroup = uniqueConnected(x, y, visited, FIRE)
-            if uniqueGroup > 0:
-                fireCatched.append(uniqueGroup)
-
-
-for i in range(100000):
-    iterate()
-
-
-plt.figure()
-n, bins, patches = plt.hist(fireCatched, 20)
-
-
-def func(x, a):
-    return n[0] * x**a
-
-
-optimizeX = bins[1:]
-optimizeY = n
-optimizedParameters, pcov = opt.curve_fit(func, optimizeX, optimizeY)
-
-plotx = np.linspace(np.amin(bins), np.amax(bins), 100)
-#plt.plot(bins[:-1], n)
-plt.plot(plotx, func(plotx, *optimizedParameters))
-
-plt.xlabel("s")
-plt.ylabel("N(s)")
-plt.title("g = {1:.2f}, f = {2:.2f}, $\\alpha \\approx {0:.2f}$".format(
-    optimizedParameters[0], growthProbability, lightningStrikeProbability), loc="left")
-plt.figlegend(('$N s^{-\\alpha}$', 'Simulation histogram'))
-
-plt.savefig("./plots/4_5/histogram.png", dpi=160)
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_surface(X, Y, Z,
+                cmap='rainbow', edgecolor='none')
+ax.set_xlabel('Growth probability')
+ax.set_ylabel('Lightning strike probability')
+ax.set_zlabel('$\\alpha$')
+ax.view_init(45, 135 + 90 + 180)
+plt.savefig("./plots/4_5/parameters.png", dpi=200)
