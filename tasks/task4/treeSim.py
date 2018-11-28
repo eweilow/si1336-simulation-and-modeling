@@ -50,7 +50,6 @@ def treeSimulation(gridSize, growthProbability, lightningStrikeProbability):
         nextGrid[:, :] = grid[:, :]
         for x in range(gridSize):
             for y in range(gridSize):
-
                 if grid[x, y] == EMPTY and rnd.random() < growthProbability:
                     nextGrid[x, y] = TREE
 

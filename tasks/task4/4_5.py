@@ -8,7 +8,7 @@ from treeSim import treeSimulation
 def optimize(g, f, name=False, save=False):
     iterate, getFireCatched, getGrid = treeSimulation(40, g, f)
 
-    for i in range(5):
+    for i in range(500):
         iterate()
 
     n, bins = np.histogram(getFireCatched(), 25)
@@ -49,14 +49,14 @@ def optimize(g, f, name=False, save=False):
 
 optimize(0.1, 0.1, "histogram.png", True)
 
-nvals = 10
-growthProbabilities = np.linspace(0.1, 0.5, nvals)
-fireProbabilities = np.linspace(0.1, 0.5, nvals)
+nvals = 15
+growthProbabilities = np.linspace(0.1, 0.7, nvals)
+fireProbabilities = np.linspace(0.1, 0.7, nvals)
 
 X, Y = np.meshgrid(growthProbabilities, fireProbabilities)
 Z = np.zeros_like(X)
 
-N = 1
+N = 8
 
 for i in range(0, len(growthProbabilities)):
     for j in range(0, len(fireProbabilities)):
@@ -67,12 +67,12 @@ for i in range(0, len(growthProbabilities)):
             Z[i, j] += alpha / N
             print("{0:.2f} {1:.2f} {2:.2f}".format(g, f, alpha))
 
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, Z,
-                cmap='rainbow', edgecolor='none')
+plt.figure()
+fig, ax = plt.subplots()
+CS = ax.contour(X, Y, Z)
+ax.clabel(CS, inline=1, fontsize=10)
+ax.set_title('$\\alpha$ as function of growth and lightning strike probability')
+# plt.imshow(Z)
 ax.set_xlabel('Growth probability')
 ax.set_ylabel('Lightning strike probability')
-ax.set_zlabel('$\\alpha$')
-ax.view_init(45, 135 + 90 + 180)
 plt.savefig("./plots/4_5/parameters.png", dpi=200)
