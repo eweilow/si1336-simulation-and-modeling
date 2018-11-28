@@ -8,7 +8,7 @@ from treeSim import treeSimulation
 def optimize(g, f, name=False, save=False):
     iterate, getFireCatched, getGrid = treeSimulation(40, g, f)
 
-    for i in range(450):
+    for i in range(5):
         iterate()
 
     n, bins = np.histogram(getFireCatched(), 25)
@@ -56,7 +56,7 @@ fireProbabilities = np.linspace(0.1, 0.5, nvals)
 X, Y = np.meshgrid(growthProbabilities, fireProbabilities)
 Z = np.zeros_like(X)
 
-N = 5
+N = 1
 
 for i in range(0, len(growthProbabilities)):
     for j in range(0, len(fireProbabilities)):
