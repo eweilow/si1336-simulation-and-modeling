@@ -7,7 +7,7 @@ import sys
 
 sys.setrecursionlimit(15000)
 
-gridSize = 40
+gridSize = 8
 grid = np.zeros((gridSize, gridSize))
 nextGrid = np.zeros_like(grid)
 
@@ -81,30 +81,19 @@ def iterate():
                 fireCatched.append(uniqueGroup)
 
 
-for i in range(100000):
-    iterate()
+N = 3
 
-
+t = 0
 plt.figure()
-n, bins, patches = plt.hist(fireCatched, 20)
+for i in range(N-1):
+    for j in range(N+1):
+        iterate()
+        t += 1
+        plt.subplot(N-1, N+1, i*(N+1) + j + 1)
+        plt.title("t = {0}".format(t))
+        plt.tight_layout()
+        plt.imshow(grid)
+        plt.clim(EMPTY, FIRE)
 
-
-def func(x, a):
-    return n[0] * x**a
-
-
-optimizeX = bins[1:]
-optimizeY = n
-optimizedParameters, pcov = opt.curve_fit(func, optimizeX, optimizeY)
-
-plotx = np.linspace(np.amin(bins), np.amax(bins), 100)
-#plt.plot(bins[:-1], n)
-plt.plot(plotx, func(plotx, *optimizedParameters))
-
-plt.xlabel("s")
-plt.ylabel("N(s)")
-plt.title("g = {1:.2f}, f = {2:.2f}, $\\alpha \\approx {0:.2f}$".format(
-    optimizedParameters[0], growthProbability, lightningStrikeProbability), loc="left")
-plt.figlegend(('$N s^{-\\alpha}$', 'Simulation histogram'))
-
-plt.savefig("./plots/4_5/histogram.png", dpi=160)
+plt.tight_layout()
+plt.savefig("./plots/4_5/sample.png", dpi=200)
