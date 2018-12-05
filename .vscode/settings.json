@@ -1,3 +1,7 @@
 {
-  "python.linting.enabled": false
+  "python.linting.enabled": false,
+  "files.associations": {
+    "mtwist.h": "c",
+    "mtwist.h\u0000wist.h": "c"
+  }
 }
