@@ -2,6 +2,8 @@
   "python.linting.enabled": false,
   "files.associations": {
     "mtwist.h": "c",
-    "mtwist.h\u0000wist.h": "c"
+    "mtwist.h\u0000wist.h": "c",
+    "math.h": "c",
+    "cmath": "c"
   }
 }
