@@ -1,3 +1,5 @@
+import matplotlib
+from matplotlib import patheffects
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -25,10 +27,13 @@ with open("./5_3/data.bin", "rb") as f:
         ratios.append(ratio)
         averageDistances.append(averageDistance)
 
+plt.xkcd()
+matplotlib.rcParams['path.effects'] = [
+    patheffects.withStroke(linewidth=0, foreground='w')]
 
 plt.figure()
 plt.xkcd()
-plt.plot(temperatures, cVs)
+plt.plot(temperatures, cVs, linewidth=1)
 plt.xlim((0.2, 1.0))
 plt.ylim((0, 75))
 plt.xlabel("Temperature")
@@ -37,7 +42,7 @@ plt.savefig("./plots/5_4/heat.png", dpi=200, bbox_inches='tight')
 
 plt.figure()
 plt.xkcd()
-plt.plot(temperatures, means)
+plt.plot(temperatures, means, linewidth=1)
 plt.xlim((0.2, 1.0))
 plt.ylim((-50, -25))
 plt.xlabel("Temperature")

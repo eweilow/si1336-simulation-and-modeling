@@ -1,3 +1,5 @@
+import matplotlib
+from matplotlib import patheffects
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -25,17 +27,19 @@ with open("./5_3/data.bin", "rb") as f:
         ratios.append(ratio)
         averageDistances.append(averageDistance)
 
+plt.xkcd()
+matplotlib.rcParams['path.effects'] = [
+    patheffects.withStroke(linewidth=0, foreground='w')]
+
 
 plt.figure()
-plt.xkcd()
-plt.semilogx(temperatures, averageDistances)
+plt.semilogx(temperatures, averageDistances, linewidth=1)
 plt.xlabel("Temperature")
 plt.ylabel("Average particle distance")
 plt.savefig("./plots/5_3/acceptance.png", dpi=200, bbox_inches='tight')
 
 plt.figure()
-plt.xkcd()
-plt.plot(temperatures, averageDistances)
+plt.plot(temperatures, averageDistances, linewidth=1)
 plt.xlim((0.2, 1.0))
 plt.xlabel("Temperature")
 plt.ylabel("Average particle distance")

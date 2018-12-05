@@ -1,0 +1,92 @@
+import { Tex, InlineTex } from "react-tex";
+export { default as theme } from "../theme";
+
+# SI1336 - Project 5
+
+## E. Weilow
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css"
+  integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML"
+  crossOrigin="anonymous"
+/>
+
+<style>
+  {`
+img {
+  max-width: 800px !important;
+}
+* {
+  font-family: 'Comic Sans MS';
+}
+`}
+</style>
+
+---
+
+# Metropolis model
+
+---
+
+## (5.1) Sampling
+
+![plot](./plots/5_1/mean.png)
+
+![plot](./plots/5_1/delta.png)
+
+Seems that large step sizes tend to be good =)
+
+---
+
+## (5.1) Comparisons
+
+![plot](./plots/5_1/difference.png)
+
+![plot](./plots/5_1/diff.png)
+
+Larger step sizes seem to be better
+
+---
+
+## (5.2) Acceptance
+
+![plot](./plots/5_2/acceptance.png)
+
+Acceptance ratio around 70% for step size of 0.1
+
+---
+
+## (5.2) Convergence of energy and heat capacity
+
+![plot](./plots/5_2/convergence.png)
+
+![plot](./plots/5_2/cV.png)
+
+Converges to \<E\> = -37.5 and cV = 10 for step size of 0.1
+
+---
+
+## (5.3) Average distance
+
+![plot](./plots/5_3/acceptance.png)
+
+Peaks around T=1
+
+---
+
+## (5.3) Average distance (smaller range)
+
+![plot](./plots/5_3/small_range.png)
+
+Peaks around T=1
+
+---
+
+## (5.4) Energy and heat capacity for different temperatures
+
+![plot](./plots/5_4/energy.png)
+
+![plot](./plots/5_4/heat.png)
+
+Energy seem to increase with temperature (reasonable) while heat capacity decreases (maybe reasonable?).

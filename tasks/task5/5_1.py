@@ -1,3 +1,5 @@
+from matplotlib import patheffects
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -34,19 +36,22 @@ for filename in names:
         meansArrays.append(means)
         deltasArrays.append(deltas)
 
+plt.xkcd()
+matplotlib.rcParams['path.effects'] = [
+    patheffects.withStroke(linewidth=0, foreground='w')]
+
 maxRange = 0
 plt.figure(0)
 for i in range(len(legendNames)):
     maxRange = max(max(stepsArrays[i]), maxRange)
     plt.plot(stepsArrays[i], meansArrays[i], linewidth=1, label=legendNames[i])
-
-plt.xkcd()
-plt.title("Plot of <f>")
+plt.title("Plot of <f>", loc='left')
 plt.xlim((0, maxRange))
 plt.ylim((0.8, 1.2))
 plt.plot((0, maxRange), (1, 1), 'g--')
 plt.xlabel("$x_i$")
 plt.ylabel("<f>")
+plt.xticks(np.linspace(0, maxRange+70, 5))
 plt.figlegend()
 plt.savefig("./plots/5_1/mean.png", dpi=240, bbox_inches='tight')
 
@@ -56,9 +61,10 @@ for i in range(len(legendNames)):
              linewidth=1, label=legendNames[i])
 
 plt.xlim((0, maxRange))
-plt.title("Plot of $\Delta$")
+plt.title("Plot of $\Delta$", loc='left')
 plt.xlabel("$x_i$")
 plt.ylabel("$\Delta$")
+plt.xticks(np.linspace(0, maxRange+70, 5))
 plt.plot((0, maxRange), (0, 0), 'g--')
 plt.figlegend()
 plt.savefig("./plots/5_1/delta.png", dpi=240, bbox_inches='tight')
@@ -70,20 +76,22 @@ for i in range(len(legendNames)):
 plt.ylim((-0.01, 0.15))
 
 plt.xlim((0, maxRange))
-plt.title("Difference to real answer")
+plt.title("Difference to real answer", loc='left')
 plt.xlabel("$x_i$")
 plt.ylabel("$|<f> - 1|$")
+plt.xticks(np.linspace(0, maxRange+70, 5))
 plt.plot((0, maxRange), (0, 0), 'g--')
 plt.figlegend()
 plt.savefig("./plots/5_1/difference.png", dpi=240, bbox_inches='tight')
 
 plt.figure(3)
-plt.title("$\Delta$ against actual difference to real answer")
+plt.title("$\Delta$ against actual difference", loc='left')
 plt.xlim((0, maxRange / 2))
 plt.xlabel("$x_i$")
-plt.ylabel("$\Delta$ - $|<f> - 1|$")
+plt.xticks(np.linspace(0, maxRange+70, 5))
+plt.ylabel("$|<f> - 1|$ - $\Delta$")
 for i in range(len(legendNames)):
-    plt.plot(stepsArrays[i], np.array(deltasArrays[i]) - np.abs(
-        np.array(meansArrays[i]) - np.ones_like(meansArrays[i])), linewidth=1, label=legendNames[i])
+    plt.plot(stepsArrays[i], np.abs(
+        np.array(meansArrays[i]) - np.ones_like(meansArrays[i])) - np.array(deltasArrays[i]), linewidth=1, label=legendNames[i])
 plt.figlegend()
 plt.savefig("./plots/5_1/diff.png", dpi=240, bbox_inches='tight')
