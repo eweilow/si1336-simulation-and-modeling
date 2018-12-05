@@ -40,6 +40,7 @@ for i in range(len(legendNames)):
     maxRange = max(max(stepsArrays[i]), maxRange)
     plt.plot(stepsArrays[i], meansArrays[i], linewidth=1, label=legendNames[i])
 
+plt.xkcd()
 plt.title("Plot of <f>")
 plt.xlim((0, maxRange))
 plt.ylim((0.8, 1.2))
@@ -47,7 +48,7 @@ plt.plot((0, maxRange), (1, 1), 'g--')
 plt.xlabel("$x_i$")
 plt.ylabel("<f>")
 plt.figlegend()
-plt.savefig("./plots/5_1/mean.png", dpi=240)
+plt.savefig("./plots/5_1/mean.png", dpi=240, bbox_inches='tight')
 
 plt.figure(1)
 for i in range(len(legendNames)):
@@ -60,7 +61,7 @@ plt.xlabel("$x_i$")
 plt.ylabel("$\Delta$")
 plt.plot((0, maxRange), (0, 0), 'g--')
 plt.figlegend()
-plt.savefig("./plots/5_1/delta.png", dpi=240)
+plt.savefig("./plots/5_1/delta.png", dpi=240, bbox_inches='tight')
 
 plt.figure(2)
 for i in range(len(legendNames)):
@@ -74,7 +75,7 @@ plt.xlabel("$x_i$")
 plt.ylabel("$|<f> - 1|$")
 plt.plot((0, maxRange), (0, 0), 'g--')
 plt.figlegend()
-plt.savefig("./plots/5_1/difference.png", dpi=240)
+plt.savefig("./plots/5_1/difference.png", dpi=240, bbox_inches='tight')
 
 plt.figure(3)
 plt.title("$\Delta$ against actual difference to real answer")
@@ -85,4 +86,4 @@ for i in range(len(legendNames)):
     plt.plot(stepsArrays[i], np.array(deltasArrays[i]) - np.abs(
         np.array(meansArrays[i]) - np.ones_like(meansArrays[i])), linewidth=1, label=legendNames[i])
 plt.figlegend()
-plt.savefig("./plots/5_1/diff.png", dpi=240)
+plt.savefig("./plots/5_1/diff.png", dpi=240, bbox_inches='tight')

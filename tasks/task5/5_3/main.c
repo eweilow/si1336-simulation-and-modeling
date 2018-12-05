@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include "../mtwist/mtwist.c"
 
-#define SIMULATION_LENGTH 10000
+#define SIMULATION_LENGTH 100000
 #define PARTICLE_COUNT 20
 
 // Defines Boltzmann's constant
 #define kB 1.0
-// Defines temperature
-#define T 0.6
-#define kBT (kB * T)
 
 #define SIGMA 1.0
 #define EPSILON 1.0
@@ -81,6 +78,23 @@ double computePotential(struct Particle *particles, long n)
   return sum;
 }
 
+double computeAverageDistance(struct Particle *particles, long n)
+{
+  double sum = 0.0;
+
+  int toI = n;
+  int toJ = n - 1;
+  for (int i = 0; i < toI; i++)
+  {
+    for (int j = i; j < toJ; j++)
+    {
+      sum += periodicDistance(&particles[i], &particles[j + 1]);
+    }
+  }
+
+  return sum;
+}
+
 void boundParticle(struct Particle *particles, long i)
 {
   while (particles[i].x < 0.0)
@@ -113,7 +127,7 @@ void initialize(struct Particle *particles, long n)
   }
 }
 
-double sweep(double maxStepSize, struct Particle *particles, struct Particle *temporary, long n)
+double sweep(double maxStepSize, double temperature, struct Particle *particles, struct Particle *temporary, long n)
 {
   double totalRatio = 0.0;
   for (int i = 0; i < n; i++)
@@ -134,7 +148,7 @@ double sweep(double maxStepSize, struct Particle *particles, struct Particle *te
       potentialChange += potential(temporaryDistance) - potential(previousDistance);
     }
 
-    double ratio = exp(-potentialChange / kBT);
+    double ratio = exp(-potentialChange / (kB * temperature));
 
     if (ratio > RND(0, 1))
     {
@@ -150,12 +164,14 @@ double sweep(double maxStepSize, struct Particle *particles, struct Particle *te
 struct Result
 {
   double maxStepSize;
+  double temperature;
   double mean;
   double cV;
   double ratio;
+  double averageDistance;
 };
 
-struct Result createSimulation(double maxStepSize)
+struct Result createSimulation(double maxStepSize, double temperature)
 {
   struct Particle *particles = (struct Particle *)malloc(sizeof(struct Particle) * PARTICLE_COUNT);
   struct Particle *temporary = (struct Particle *)malloc(sizeof(struct Particle) * PARTICLE_COUNT);
@@ -167,15 +183,18 @@ struct Result createSimulation(double maxStepSize)
 
   double *potentials = (double *)malloc(sizeof(double) * SIMULATION_LENGTH);
   double *ratios = (double *)malloc(sizeof(double) * SIMULATION_LENGTH);
+  double *distances = (double *)malloc(sizeof(double) * SIMULATION_LENGTH);
   for (long i = 0; i < SIMULATION_LENGTH; i++)
   {
-    ratios[i] = sweep(maxStepSize, particles, temporary, PARTICLE_COUNT);
+    ratios[i] = sweep(maxStepSize, temperature, particles, temporary, PARTICLE_COUNT);
     potentials[i] = computePotential(particles, PARTICLE_COUNT);
+    distances[i] = computeAverageDistance(particles, PARTICLE_COUNT) / (PARTICLE_COUNT * (PARTICLE_COUNT - 1) / 2);
   }
 
   double *partialMeans = (double *)malloc(sizeof(double) * MEAN_STEPS);
   double *partialDeviations = (double *)malloc(sizeof(double) * MEAN_STEPS);
   double *partialRatios = (double *)malloc(sizeof(double) * MEAN_STEPS);
+  double *partialDistances = (double *)malloc(sizeof(double) * MEAN_STEPS);
   for (unsigned long i = 1; i <= MEAN_STEPS; i++)
   {
     unsigned long to = min(SIMULATION_LENGTH, i * MEAN_INCR);
@@ -183,50 +202,65 @@ struct Result createSimulation(double maxStepSize)
     double mean = 0.0;
     double deviation = 0.0;
     double ratio = 0.0;
+    double distance = 0.0;
     for (unsigned long j = MEAN_SKIP; j < to; j++)
     {
       mean += potentials[j] / (double)(to - MEAN_SKIP);
+      distance += distances[j] / (double)(to - MEAN_SKIP);
       deviation += potentials[j] * potentials[j] / (double)(to - MEAN_SKIP);
       ratio += ratios[j] / (double)((to - MEAN_SKIP) * PARTICLE_COUNT);
     }
+    partialDistances[i - 1] = distance;
     partialMeans[i - 1] = mean;
-    partialDeviations[i - 1] = (deviation - mean * mean) / (kB * T * T);
+    partialDeviations[i - 1] = (deviation - mean * mean) / (kB * temperature * temperature);
     partialRatios[i - 1] = ratio;
   }
 
   struct Result result;
   result.maxStepSize = maxStepSize;
+  result.temperature = temperature;
   result.mean = partialMeans[MEAN_STEPS - 1];
   result.cV = partialDeviations[MEAN_STEPS - 1];
   result.ratio = partialRatios[MEAN_STEPS - 1];
+  result.averageDistance = partialDistances[MEAN_STEPS - 1];
+
+  /*for (int n = 0; n < PARTICLE_COUNT; n++)
+  {
+    for (int l = n + 1; l < PARTICLE_COUNT; l++)
+    {
+      printf("(%f %f) to (%f %f) = %f\n", particles[n].x, particles[n].y, particles[l].x, particles[l].y, periodicDistance(&particles[n], &particles[l]));
+    }
+  }*/
 
   free(particles);
   free(temporary);
   free(potentials);
+  free(distances);
   free(ratios);
   free(partialMeans);
   free(partialDeviations);
   free(partialRatios);
+  free(partialDistances);
 
   return result;
 }
 
 #define N 1000
-#define FROM -5.0
+#define FROM -2.0
 #define TO 2.0
-int main()
+void runForTemperature(char *name)
 {
   struct Result *results = (struct Result *)malloc(sizeof(struct Result) * N);
 #pragma acc parallel loop copy(results [0:N])
   for (unsigned int n = 0; n < N; ++n)
   {
     printf("Running %d\n", n);
-    struct Result result = createSimulation(pow(10, FROM + ((TO - FROM) / N) * n));
+    struct Result result = createSimulation(0.1, pow(10, FROM + ((TO - FROM) / N) * n));
     results[n] = result;
   }
 
   FILE *ptr;
-  ptr = fopen("./data.bin", "wb");
+  ptr = fopen(name, "wb");
   unsigned int count = N;
   fwrite(&count, sizeof(unsigned int), 1, ptr);
   fwrite(results, sizeof(struct Result), N, ptr);
@@ -234,11 +268,19 @@ int main()
 
   for (unsigned int n = 0; n < N; ++n)
   {
+    printf("T: %f, ", results[n].temperature);
     printf("stepSize: %f, ", results[n].maxStepSize);
     printf("mean: %f, ", results[n].mean);
     printf("cV: %f, ", results[n].cV);
-    printf("ratio: %f\n", results[n].ratio);
+    printf("ratio: %f, ", results[n].ratio);
+    printf("<r>: %f\n", results[n].averageDistance);
   }
 
+  free(results);
+}
+
+int main()
+{
+  runForTemperature("./data.bin");
   return 0;
 }
