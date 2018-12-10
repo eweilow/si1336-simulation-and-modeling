@@ -49,8 +49,8 @@ def plotData(
         ax.set_zlim(np.amin(data), np.amax(data))
     else:
         plt.title(title)
-        #plt.contour(data, extent=(0, 10, 0, 10), cmap="rainbow")
-        plt.imshow(data, extent=(0, 10, 0, 10))
+        plt.contour(data, extent=(0, 10, 0, 10), cmap="rainbow")
+        #plt.imshow(data, extent=(0, 10, 0, 10))
         plt.colorbar()
 
     plt.savefig(filename, dpi=240)
