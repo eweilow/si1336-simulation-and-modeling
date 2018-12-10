@@ -33,7 +33,7 @@ void runRelaxationsAgainstHighPrecision(char *name,
       desiredGrid);
 
   runRelaxationsUntilAccuracy(
-      "../../data/1010_c_1.bin",
+      name,
       linearDimension,
       points,
       wantedPrecision,
