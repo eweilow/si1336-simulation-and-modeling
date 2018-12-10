@@ -34,11 +34,11 @@
 \newcommand{\doublefigure}[2]{
 \begin{figure}[H]
   \centering
-  \begin{minipage}{0.45\textwidth}
+  \begin{minipage}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{#1}
   \end{minipage}
-  \begin{minipage}{0.45\textwidth}
+  \begin{minipage}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{#2}
   \end{minipage}
@@ -85,23 +85,46 @@
   Choose the grid size $\Delta x = \Delta y = 1$
 }
 \subtask{Guess the exact form of $V(x, y)$}
+A guess is $V(x,y) = 10$. This is reasonable as all the boundaries are $V=10$ and the algorithm algorithm makes each point the average of the points around it.
+For a small grid ($\Delta x = \Delta y = 5$), the center point would be instantly equal to 10.
+
 \subtask{How many iterations are necessary to achieve 1\% accuracy?}
+It takes about 56 relaxations to achieve 1\% accuracy, producing the shape seen in the below plot.
+\singlefigure{./plots/1010/a_1.png}
+
 \subtask{Decrease the grid size by a factor of two, and determine the number of iterations that are now necessary to achieve 1\% accuracy.}
+With a grid size $\Delta x = \Delta y = 0.5$, it takes instead closer to 225 relaxations to achieve the same accuracy. 
+\singlefigure{./plots/1010/a_2.png}
+For these two simple cases, we can see that the amount of relaxations could follow
+$$
+n_{relaxations} \propto \frac{1}{\Delta x \Delta y}
+$$
 
 \task{b}{
   Consider the same geometry as in part (a), but set the initial potential at the interior sites
   equal to zero except for the center site whose potential is set equal to four.
 }
 \subtask{Does the potential distribution evolve to the same values as in part (a)?}
+It does evolve to the same values as in part (a), but does so much slower with around 102 relaxations necessary.
+\singlefigure{./plots/1010/b_1.png}
+
 \subtask{What is the effect of a poor initial guess?}
+The result is really only that the convergence is slower.
+
 \subtask{Are the final results independent of your initial guess?}
+The final results should be independent of the guess. Since each point in every relaxation step is set to the average of the 4 surrounding points, there will only be no change if all points in the grid fulfill $V(x,y) = 10$.
 
 \task{c}{
   Now modify the boundary conditions so that the value of the potential at the four sides is 5, 10, 5, and 10, respectively.
   (Start with a reasonable guess for the initial values of the potential at the interior sites and iterate until 1\% accuracy is obtained.)
 }
 \subtask{Sketch the equipotential surfaces.}
+By these boundary conditions, we get a saddle as seen in the below figure (and equipotential surfaces plot).
+\doublefigure{./plots/1010/c_1.png}{./plots/1010/c_1_eq.png}
+
 \subtask{What happens if the potential is 10 on three sides and 0 on the fourth?}
+Now we get a sort of rounded slope, that tends toward $V=0$ for $y = 0$.
+\singlefigure{./plots/1010/c_2.png}
 
 \section*{10.11 Gauss-Seidel relaxation}
 \task{a}{

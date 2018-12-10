@@ -45,12 +45,16 @@ def plotData(
                                edgecolor='none', shade=True)
         ax.plot_wireframe(x, y, data, rstride=1, cstride=10, alpha=0.2)
         ax.view_init(35, 135 + 75)
+        plt.xlabel("x")
+        plt.ylabel("y")
         # plt.colorbar(surf)
         ax.set_zlim(np.amin(data), np.amax(data))
+        plt.savefig(filename, dpi=240)
     else:
         plt.title(title)
         plt.contour(data, extent=(0, 10, 0, 10), cmap="rainbow")
+        plt.xlabel("x")
+        plt.ylabel("y")
         #plt.imshow(data, extent=(0, 10, 0, 10))
         plt.colorbar()
-
-    plt.savefig(filename, dpi=240)
+        plt.savefig(filename, dpi=240, bbox_inches='tight')
