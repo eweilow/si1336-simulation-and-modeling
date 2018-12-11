@@ -1,165 +1,192 @@
 #include "../common/relax.c"
 
-void subdivideGrid(
-    struct Grid *grid,
-    double (*boundaryValue)(struct Grid *grid, unsigned long, unsigned long),
-    double (*guessPotential)(struct Grid *grid, unsigned long, unsigned long))
-{
-  struct Grid newGrid = createGrid(grid->linearDimension, (grid->points - 1) * 2);
-  setBoundaryConditions(&newGrid, boundaryValue);
-
-  /*for (unsigned long n = 1; n < newGrid.points - 1; ++n)
-  {
-    for (unsigned long l = 1; l < newGrid.points - 1; ++l)
-    {
-      char buf[10];
-      int len = sprintf(buf, "(%d,%d)", l / 2, n / 2);
-      printf("%*s", 6, buf, len);
-    }
-    printf("\n");
-  }*/
-
-  for (unsigned long n = 1; n < newGrid.points - 1; ++n)
-  {
-    for (unsigned long l = 1; l < newGrid.points - 1; ++l)
-    {
-      unsigned long y = n % 2;
-      unsigned long x = l % 2;
-      /*if (y == x && x == 0)
-      {
-        char buf[10];
-        int len = sprintf(buf, "(%d,%d)", l / 2, n / 2);
-        printf("%*s", 6, buf, len);
-      }
-      else
-      {
-
-        printf("%*s", 6, y == x ? "x " : (y == 1 ? "| " : "- "));
-      }*/
-
-      unsigned int i = n / 2;
-      unsigned int j = l / 2;
-      if (y == x && x == 0)
-      {
-        newGrid.currentGrid[n][l] = grid->currentGrid[i][j];
-      }
-      else if (y == x && x == 1)
-      {
-        //newGrid.currentGrid[n][l] = 0.25 * (grid->currentGrid[i][j] + grid->currentGrid[i + 1][j] + grid->currentGrid[i][j] + grid->currentGrid[i][j + 1]);
-        double topLeft = grid->currentGrid[i][j];
-        double bottomLeft = grid->currentGrid[i + 1][j];
-        double topRight = grid->currentGrid[i][j + 1];
-        double bottomRight = grid->currentGrid[i + 1][j + 1];
-        newGrid.currentGrid[n][l] = 0.25 * (bottomRight + topRight + topLeft + bottomLeft);
-      }
-      else if (y == 1 && x == 0)
-      {
-        newGrid.currentGrid[n][l] = 0.5 * (grid->currentGrid[i][j] + grid->currentGrid[i + 1][j]);
-      }
-      else if (x == 1 && y == 0)
-      {
-        newGrid.currentGrid[n][l] = 0.5 * (grid->currentGrid[i][j] + grid->currentGrid[i][j + 1]);
-      }
-    }
-    //printf("\n");
-  }
-
-  freeGrid(grid);
-  *grid = newGrid;
-  computeAccuracy(grid, guessPotential);
-}
-
 double **finalGrid;
-
 double guessPotentialAgainstExact(struct Grid *grid, unsigned long i, unsigned long j)
 {
   return finalGrid[i][j];
 }
 
-#define RELAXATIONS_PER_SUBDIVIDE 1
+struct Grid *createGrids(
+    double linearDimension,
+    unsigned long finalPowerOfTwo,
+    double (*initialValue)(struct Grid *grid, unsigned long, unsigned long),
+    double (*boundaryValue)(struct Grid *grid, unsigned long, unsigned long))
+{
+  struct Grid *grids;
 
-void prolongate(struct Grid *from, struct Grid *into)
+  grids = (struct Grid *)malloc(sizeof(struct Grid) * (finalPowerOfTwo));
+
+  for (unsigned long n = 0; n < finalPowerOfTwo; ++n)
+  {
+    unsigned long size = 2 << n;
+    struct Grid grid = createGrid(linearDimension, size);
+    setInitialValues(&grid, initialValue);
+    setBoundaryConditions(&grid, boundaryValue);
+    grids[n] = grid;
+  }
+
+  return grids;
+}
+
+// move from courser to finer
+void doProlongate(struct Grid *from, struct Grid *into)
 {
   if ((from->points - 1) * 2 != (into->points - 1))
   {
-    printf("Expected to double points, didn't!");
+    printf("Expected to double points, didn't! (%d -> %d)\n", from->points, into->points);
     return;
+  }
+
+  into->relaxations = 0;
+  for (unsigned long n = 1; n < into->points - 1; ++n)
+  {
+    for (unsigned long l = 1; l < into->points - 1; ++l)
+    {
+      unsigned long y = n % 2;
+      unsigned long x = l % 2;
+
+      unsigned int i = n / 2;
+      unsigned int j = l / 2;
+      if (y == x && x == 0)
+      {
+        into->currentGrid[n][l] = from->currentGrid[i][j];
+      }
+      else if (y == x && x == 1)
+      {
+        double topLeft = from->currentGrid[i][j];
+        double bottomLeft = from->currentGrid[i + 1][j];
+        double topRight = from->currentGrid[i][j + 1];
+        double bottomRight = from->currentGrid[i + 1][j + 1];
+        into->currentGrid[n][l] = 0.25 * (bottomRight + topRight + topLeft + bottomLeft);
+      }
+      else if (y == 1 && x == 0)
+      {
+        into->currentGrid[n][l] = 0.5 * (from->currentGrid[i][j] + from->currentGrid[i + 1][j]);
+      }
+      else if (x == 1 && y == 0)
+      {
+        into->currentGrid[n][l] = 0.5 * (from->currentGrid[i][j] + from->currentGrid[i][j + 1]);
+      }
+    }
+  }
+}
+
+// move from finer to courser
+void doRestrict(struct Grid *from, struct Grid *into)
+{
+  if ((from->points - 1) != (into->points - 1) * 2)
+  {
+    printf("Expected to halve points, didn't! (%d -> %d)\n", from->points, into->points);
+    return;
+  }
+
+  into->relaxations = 0;
+  for (unsigned long n = 1; n < into->points - 1; ++n)
+  {
+    for (unsigned long l = 1; l < into->points - 1; ++l)
+    {
+      unsigned long i = n * 2;
+      unsigned long j = l * 2;
+
+      double center = from->currentGrid[i][j];
+      double nearestNeighbours = from->currentGrid[i + 1][j] + from->currentGrid[i - 1][j] + from->currentGrid[i][j - 1] + from->currentGrid[i][j + 1];
+      double cornerNeighbours = from->currentGrid[i - 1][j - 1] + from->currentGrid[i + 1][j - 1] + from->currentGrid[i - 1][j + 1] + from->currentGrid[i + 1][j + 1];
+      into->currentGrid[n][l] = (1 / 4.0) * center + (1 / 8.0) * nearestNeighbours + (1 / 16.0) * cornerNeighbours;
+    }
   }
 }
 
 void multigrid(
     double linearDimension,
     double desiredAccuracy,
+    unsigned long POWER_OF_TWO_MAX,
+    unsigned long WANTED_POWER_OF_TWO,
+    unsigned long RELAXATIONS_PER_PROLONGATION,
+    unsigned long RELAXATIONS_PER_RESTRICTION,
     void (*relaxFn)(struct Grid *grid),
     double (*initialValue)(struct Grid *grid, unsigned long, unsigned long),
     double (*boundaryValue)(struct Grid *grid, unsigned long, unsigned long),
     double (*guessPotential)(struct Grid *grid, unsigned long, unsigned long))
 {
-  const unsigned long finalPowerOftwo = 3;
+  struct Grid *grids = createGrids(linearDimension, POWER_OF_TWO_MAX, initialValue, boundaryValue);
+  //for (unsigned long n = 0; n < POWER_OF_TWO; ++n)
+  //{
+  //  printGrid(grids + n);
+  //}
 
-  struct Grid finalGridBaseline = createGrid(linearDimension, 2 << finalPowerOftwo);
-  setInitialValues(&finalGridBaseline, initialValue);
-  setBoundaryConditions(&finalGridBaseline, boundaryValue);
+  unsigned long realRelaxationsRun = 0;
+  double equivalentRelaxationsRun = 0.0;
+  relaxFn(grids);
+  equivalentRelaxationsRun += 1.0;
+
+  for (unsigned long n = 0; n < POWER_OF_TWO_MAX - 1; ++n)
+  {
+    doProlongate(grids + n, grids + n + 1);
+    equivalentRelaxationsRun /= 4.0;
+
+    for (unsigned long i = 0; i < RELAXATIONS_PER_PROLONGATION; ++i)
+    {
+      relaxFn(grids + n + 1);
+      equivalentRelaxationsRun += 1.0;
+      realRelaxationsRun += 1;
+    }
+    //printGrid(grids + n);
+  }
+  for (unsigned long n = POWER_OF_TWO_MAX - 1; n >= WANTED_POWER_OF_TWO - 1; --n)
+  {
+    doRestrict(grids + n, grids + n - 1);
+    equivalentRelaxationsRun *= 4.0;
+    for (unsigned long i = 0; i < RELAXATIONS_PER_RESTRICTION; ++i)
+    {
+      relaxFn(grids + n - 1);
+      equivalentRelaxationsRun += 1.0;
+      realRelaxationsRun += 1;
+    }
+  }
+
+  printf("\nRun %.4f equivalent relaxations (%d real)\n", equivalentRelaxationsRun, realRelaxationsRun);
+
+  /* Necessary to compute accuracy */
+  struct Grid finalGridForAccuracy = createGrid(linearDimension, 2 << (WANTED_POWER_OF_TWO - 1));
+  setInitialValues(&finalGridForAccuracy, initialValue);
+  setBoundaryConditions(&finalGridForAccuracy, boundaryValue);
+  copyNextIntoCurrentGrid(&finalGridForAccuracy, (grids + (WANTED_POWER_OF_TWO - 1))->currentGrid, finalGridForAccuracy.currentGrid);
   for (unsigned long n = 0; n < 150000; ++n)
   {
-    relaxFn(&finalGridBaseline);
+    relaxFn(&finalGridForAccuracy);
   }
+  finalGrid = finalGridForAccuracy.currentGrid;
 
-  finalGrid = finalGridBaseline.currentGrid;
+  printf("\nGrid directly after multigrid method");
+  computeAccuracy(grids + WANTED_POWER_OF_TWO - 1, guessPotentialAgainstExact);
+  printGrid(grids + WANTED_POWER_OF_TWO - 1);
 
-  struct Grid grid = createGrid(linearDimension, 2);
-  setInitialValues(&grid, initialValue);
-  setBoundaryConditions(&grid, boundaryValue);
+  printf("\nGrid for accuracy calculation");
+  printGrid(&finalGridForAccuracy);
 
-  printf("\nInitial grid:");
-  relaxFn(&grid);
-  computeAccuracy(&grid, guessPotential);
-  printGrid(&grid);
-
-  for (unsigned long n = 1; n <= finalPowerOftwo; ++n)
+  /* Compute a baseline to compare with */
+  struct Grid baselineGrid = createGrid(linearDimension, 2 << (WANTED_POWER_OF_TWO - 1));
+  setInitialValues(&baselineGrid, initialValue);
+  setBoundaryConditions(&baselineGrid, boundaryValue);
+  computeAccuracy(&baselineGrid, guessPotential);
+  do
   {
-    subdivideGrid(&grid, boundaryValue, guessPotential);
-    for (unsigned long r = 0; r < RELAXATIONS_PER_SUBDIVIDE; ++r)
-    {
-      relaxFn(&grid);
-    }
-    computeAccuracy(&grid, guessPotential);
-    printf("\nSubdivided:");
-    printGrid(&grid);
-  }
+    relaxFn(&baselineGrid);
+    computeAccuracy(&baselineGrid, guessPotentialAgainstExact);
+  } while (baselineGrid.currentAccuracy > desiredAccuracy);
+  printf("\nBaseline grid, without multigrid method");
+  printGrid(&baselineGrid);
+  //printAccuracy(&baselineGrid, guessPotentialAgainstExact);
 
+  /* Compute the relaxed grid with initial values from prolongation/restriction */
+  struct Grid grid = *(grids + (WANTED_POWER_OF_TWO - 1));
+  grid.relaxations = 0;
   unsigned long steps = 0;
-  while (grid.currentAccuracy > desiredAccuracy && (++steps) < 150000)
+  do
   {
     relaxFn(&grid);
     computeAccuracy(&grid, guessPotentialAgainstExact);
-  }
-  printf("\nGrid after multigrid:");
+  } while (grid.currentAccuracy > desiredAccuracy && (++steps) <= 1500000);
+  printf("\nGrid solved after multigrid method");
   printGrid(&grid);
-
-  struct Grid gridBaseline = createGrid(linearDimension, 2 << finalPowerOftwo);
-  setInitialValues(&gridBaseline, initialValue);
-  setBoundaryConditions(&gridBaseline, boundaryValue);
-  computeAccuracy(&gridBaseline, guessPotential);
-  while (gridBaseline.currentAccuracy > desiredAccuracy)
-  {
-    relaxFn(&gridBaseline);
-    computeAccuracy(&gridBaseline, guessPotentialAgainstExact);
-  }
-  printf("\nBaseline:");
-  printGrid(&gridBaseline);
-  /*
-  unsigned long steps = 0;
-  while (grid.currentAccuracy > desiredAccuracy && (++steps) <= 1500000)
-  {
-    relaxFn(&grid);
-    computeAccuracy(&grid, guessPotential);
-  }
-  printGrid(&grid);
-
-  subdivideGrid(&grid, boundaryValue, guessPotential);
-  printGrid(&grid);
-*/
-  //subdivideGrid(&grid, boundaryValue, guessPotential);
-  //printGrid(&grid);
 }

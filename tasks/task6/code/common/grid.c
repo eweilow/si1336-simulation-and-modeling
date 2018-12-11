@@ -128,6 +128,25 @@ void printGrid(struct Grid *grid)
   }
 }
 
+void printAccuracy(struct Grid *grid, double (*f)(struct Grid *grid, unsigned long, unsigned long))
+{
+  printf("\nAccuracy = %.4f%%, relaxations = %d, p = %d\n", grid->currentAccuracy * 100.0, grid->relaxations, grid->points);
+
+  if (grid->points > 23)
+  {
+    printf("<grid truncated due to size>\n");
+    return;
+  }
+  for (unsigned long i = 0; i < grid->points; ++i)
+  {
+    for (unsigned long j = 0; j < grid->points; ++j)
+    {
+      printf("%*.2f%%", 8, getAccuracy(grid->currentGrid[i][j], f(grid, i, j)) * 100);
+    }
+    printf("\n");
+  }
+}
+
 void computeAccuracy(struct Grid *grid, double (*f)(struct Grid *grid, unsigned long, unsigned long))
 {
   double accuracy = 0;
