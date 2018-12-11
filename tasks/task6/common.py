@@ -37,6 +37,22 @@ def loadRelaxationsFile(filename):
         return gridSizes, relaxations
 
 
+def loadParametersFile(filename):
+    with open(filename, "rb") as f:
+        dimension, = struct.unpack("d", f.read(struct.calcsize("d")))
+        desiredAccuracy, = struct.unpack("d", f.read(struct.calcsize("d")))
+        equivalentRun, = struct.unpack("d", f.read(struct.calcsize("d")))
+        realRun, = struct.unpack("L", f.read(struct.calcsize("L")))
+        powerOfTwoMax, = struct.unpack("L", f.read(struct.calcsize("L")))
+        powerOfTwoWanted, = struct.unpack("L", f.read(struct.calcsize("L")))
+        relaxationsPerProlongation, = struct.unpack(
+            "L", f.read(struct.calcsize("L")))
+        relaxationsPerRestriction, = struct.unpack(
+            "L", f.read(struct.calcsize("L")))
+
+        return dimension, equivalentRun, realRun, desiredAccuracy*100, 2**powerOfTwoMax, 2**powerOfTwoWanted, relaxationsPerProlongation, relaxationsPerRestriction
+
+
 def optimizePlotRelaxations(gridPoints, relaxations):
     def func(x, a, b):
         return b * x**a
@@ -74,16 +90,25 @@ def plotData(
     relaxations,
     accuracy,
     data,
-    use3d=True
+    use3d=True,
+    linearDimension=10,
+    realTitle=False,
+    postfix=True
 ):
     matplotlib.rcParams['path.effects'] = [
         patheffects.withStroke(linewidth=0, foreground='w')]
 
-    x, y = np.meshgrid(np.linspace(0, 10, points),
-                       np.linspace(0, 10, points))
+    x, y = np.meshgrid(np.linspace(0, linearDimension, points),
+                       np.linspace(0, linearDimension, points))
 
     title = "Accuracy: {0:.2f}%, {1} relaxations".format(
         accuracy * 100, relaxations)
+
+    if not realTitle == False:
+        if postfix:
+            title = realTitle + ", " + title
+        else:
+            title = realTitle
     plt.figure()
     plt.xkcd()
     if use3d:
@@ -100,7 +125,8 @@ def plotData(
         plt.savefig(filename, dpi=240)
     else:
         plt.title(title)
-        plt.contour(data, extent=(0, 10, 0, 10), cmap="rainbow")
+        plt.contour(data, extent=(0, linearDimension,
+                                  0, linearDimension), cmap="rainbow")
         plt.xlabel("x")
         plt.ylabel("y")
         #plt.imshow(data, extent=(0, 10, 0, 10))

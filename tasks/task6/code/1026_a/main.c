@@ -9,12 +9,9 @@ double guessPotential(struct Grid *grid, unsigned long i, unsigned long j)
   return 1.0;
 }
 
-#define PI 3.141592
 double boundaryValue(struct Grid *grid, unsigned long i, unsigned long j)
 {
-  double x = i / ((double)grid->points - 1);
-  double y = j / ((double)grid->points - 1);
-  return 5.0 + cos(x * PI * 2) + sin(y * PI * 2);
+  return 1;
 }
 
 double initialValue(struct Grid *grid, unsigned long i, unsigned long j)
@@ -26,12 +23,17 @@ int main()
 {
 
   multigrid(
+      "../../data/1026_exact_1.bin",
+      "../../data/1026_baseline_1.bin",
+      "../../data/1026_multigrid_1.bin",
+      "../../data/1026_premultigrid_1.bin",
+      "../../data/1026_params_1.bin",
       LINEAR_DIMENSION,
       WANTED_ACCURACY_PERCENT / 100.0,
       6,
       4,
-      2,
-      2,
+      1,
+      1,
       &relaxGaussSeidelCheckered,
       &initialValue,
       &boundaryValue,

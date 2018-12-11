@@ -97,6 +97,11 @@ void doRestrict(struct Grid *from, struct Grid *into)
 }
 
 void multigrid(
+    char *exactName,
+    char *baselineName,
+    char *multigridName,
+    char *preMultigridName,
+    char *paramsName,
     double linearDimension,
     double desiredAccuracy,
     unsigned long POWER_OF_TWO_MAX,
@@ -158,8 +163,16 @@ void multigrid(
   finalGrid = finalGridForAccuracy.currentGrid;
 
   printf("\nGrid directly after multigrid method");
+  (grids + WANTED_POWER_OF_TWO - 1)->relaxations = 0;
   computeAccuracy(grids + WANTED_POWER_OF_TWO - 1, guessPotentialAgainstExact);
   printGrid(grids + WANTED_POWER_OF_TWO - 1);
+
+  if (preMultigridName != NULL)
+  {
+    FILE *f = fopen(preMultigridName, "wb");
+    storeGridInFile(f, grids + WANTED_POWER_OF_TWO - 1);
+    fclose(f);
+  }
 
   printf("\nGrid for accuracy calculation");
   printGrid(&finalGridForAccuracy);
@@ -168,12 +181,12 @@ void multigrid(
   struct Grid baselineGrid = createGrid(linearDimension, 2 << (WANTED_POWER_OF_TWO - 1));
   setInitialValues(&baselineGrid, initialValue);
   setBoundaryConditions(&baselineGrid, boundaryValue);
-  computeAccuracy(&baselineGrid, guessPotential);
-  do
+  computeAccuracy(&baselineGrid, guessPotentialAgainstExact);
+  while (baselineGrid.currentAccuracy > desiredAccuracy)
   {
     relaxFn(&baselineGrid);
     computeAccuracy(&baselineGrid, guessPotentialAgainstExact);
-  } while (baselineGrid.currentAccuracy > desiredAccuracy);
+  }
   printf("\nBaseline grid, without multigrid method");
   printGrid(&baselineGrid);
   //printAccuracy(&baselineGrid, guessPotentialAgainstExact);
@@ -182,11 +195,44 @@ void multigrid(
   struct Grid grid = *(grids + (WANTED_POWER_OF_TWO - 1));
   grid.relaxations = 0;
   unsigned long steps = 0;
-  do
+  computeAccuracy(&grid, guessPotentialAgainstExact);
+  while (grid.currentAccuracy > desiredAccuracy && (++steps) <= 1500000)
   {
     relaxFn(&grid);
     computeAccuracy(&grid, guessPotentialAgainstExact);
-  } while (grid.currentAccuracy > desiredAccuracy && (++steps) <= 1500000);
+  }
   printf("\nGrid solved after multigrid method");
   printGrid(&grid);
+
+  if (exactName != NULL)
+  {
+    FILE *f = fopen(exactName, "wb");
+    storeGridInFile(f, &finalGridForAccuracy);
+    fclose(f);
+  }
+  if (baselineName != NULL)
+  {
+    FILE *f = fopen(baselineName, "wb");
+    storeGridInFile(f, &baselineGrid);
+    fclose(f);
+  }
+  if (multigridName != NULL)
+  {
+    FILE *f = fopen(multigridName, "wb");
+    storeGridInFile(f, &grid);
+    fclose(f);
+  }
+  if (paramsName != NULL)
+  {
+    FILE *f = fopen(paramsName, "wb");
+    fwrite(&linearDimension, sizeof(double), 1, f);
+    fwrite(&desiredAccuracy, sizeof(double), 1, f);
+    fwrite(&equivalentRelaxationsRun, sizeof(double), 1, f);
+    fwrite(&realRelaxationsRun, sizeof(unsigned long), 1, f);
+    fwrite(&POWER_OF_TWO_MAX, sizeof(unsigned long), 1, f);
+    fwrite(&WANTED_POWER_OF_TWO, sizeof(unsigned long), 1, f);
+    fwrite(&RELAXATIONS_PER_PROLONGATION, sizeof(unsigned long), 1, f);
+    fwrite(&RELAXATIONS_PER_RESTRICTION, sizeof(unsigned long), 1, f);
+    fclose(f);
+  }
 }
