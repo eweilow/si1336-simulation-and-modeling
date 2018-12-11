@@ -5,24 +5,57 @@ void relax(struct Grid *grid)
 {
   double **curr = grid->currentGrid;
 
-  unsigned int checker = false ? 2 : 1;
-  for (unsigned int check = 0; check < checker; ++check)
+  for (unsigned long i = 1; i < grid->points - 1; ++i)
   {
-    for (unsigned long i = 1; i < grid->points - 1; ++i)
+    for (unsigned long j = 1; j < grid->points - 1; ++j)
     {
-      double *add = curr[i - 1];
-      double *mid = curr[i];
-      double *sub = curr[i + 1];
-      for (unsigned long j = 1; j < grid->points - 1; ++j)
-      {
-        grid->nextGrid[i][j] = 0.25 * (sub[j] + add[j] + mid[j - 1] + mid[j + 1]);
-      }
+      grid->nextGrid[i][j] = 0.25 * (curr[i + 1][j] + curr[i - 1][j] + curr[i][j - 1] + curr[i][j + 1]);
     }
   }
 
   ++(grid->relaxations);
 
   copyNextIntoCurrentGrid(grid, grid->nextGrid, grid->currentGrid);
+}
+
+void relaxGaussSeidel(struct Grid *grid)
+{
+  double **curr = grid->currentGrid;
+
+  for (unsigned long i = 1; i < grid->points - 1; ++i)
+  {
+    for (unsigned long j = 1; j < grid->points - 1; ++j)
+    {
+      curr[i][j] = 0.25 * (curr[i + 1][j] + curr[i - 1][j] + curr[i][j - 1] + curr[i][j + 1]);
+    }
+  }
+
+  ++(grid->relaxations);
+
+  //copyNextIntoCurrentGrid(grid, grid->nextGrid, grid->currentGrid);
+}
+
+void relaxGaussSeidelCheckered(struct Grid *grid)
+{
+  double **curr = grid->currentGrid;
+
+  for (unsigned long c = 0; c < 2; ++c)
+  {
+    for (unsigned long i = 1; i < grid->points - 1; ++i)
+    {
+      for (unsigned long j = 1; j < grid->points - 1; ++j)
+      {
+        if ((i * (grid->points + 1) + j) % 2 == c)
+        {
+          curr[i][j] = 0.25 * (curr[i + 1][j] + curr[i - 1][j] + curr[i][j - 1] + curr[i][j + 1]);
+        }
+      }
+    }
+  }
+
+  ++(grid->relaxations);
+
+  //copyNextIntoCurrentGrid(grid, grid->nextGrid, grid->currentGrid);
 }
 
 unsigned long runRelaxationsUntilAccuracy(

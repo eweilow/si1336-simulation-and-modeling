@@ -136,11 +136,24 @@ Now we get a sort of rounded slope, that tends toward $V=0$ for $y = 0$.
   In this way the new potential of the next site is computed using the most recently computed values of its nearest neighbor potentials.
 }
 \subtask{Are your results better, worse, or about the same as for the simple relaxation method?}
+The convergence is about twice as fast, but produces asymmetrical equipotential surfaces as seen in the left figure.
+For the relaxations needed for different grid point counts, the constant is about half however.
+\doublefigure{./plots/1011/a_1_eq.png}{./plots/1011/a_1_dependency.png}
+
+The tradeoff is that the results might be slightly less accurate, with the bonus being increased speed.
+For larger grids, this method also only have to store a single grid - a plus for the memory usage.
+
 \task{b}{
   Imagine coloring the alternate sites of a grid red and black, so that the grid resembles a checkerboard.
   Modify the program so that all the red sites are updated first, and then all the black sites are updated.
 }
 \subtask{Do your results converge any more quickly than in part (a)?}
+For smaller grids, this method requires perhaps a single iteration less.
+For larger grids, the constant is still more or less the same.
+\doublefigure{./plots/1011/b_1_eq.png}{./plots/1011/b_1_dependency.png}
+
+It's worth noting that the loglog plot for the checkered method has data from computations matching the fit curve exactly,
+while for the method in (a) the computed data trends above for small grids while still asymptotically matching the curve for larger grids.
 
 \section*{10.26 The multigrid method}
 \task{a}{
