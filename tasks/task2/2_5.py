@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.signal as sp
 
-T = 150
+T = 250
 
 
 def integrate(x0, y0, z0):
@@ -62,21 +62,61 @@ peaks, _ = sp.find_peaks(z)
 peakTimes = t[peaks]
 peakValues = z[peaks]
 
-plt.figure()
-# plt.plot(peakTimes, peakValues)
-plt.plot(t, z)
-plt.plot(peakTimes, peakValues)
-plt.xlabel("t")
-plt.figlegend(('z(t)', '$z_m$'))
-plt.savefig("./plots/2_5/study.png")
-
-plt.figure()
+# plt.figure()
+## plt.plot(peakTimes, peakValues)
+#plt.plot(t, z)
+#plt.plot(peakTimes, peakValues)
+# plt.xlabel("t")
+#plt.figlegend(('z(t)', '$z_m$'))
+# plt.savefig("./plots/2_5/study.png")
+#
+# plt.figure()
 # plt.plot(peakTimes, peakValues)
 
 times = peakTimes[:-1]
-rolling = np.roll(peakValues, -1)[:-1] / peakValues[:-1]
-print(times, rolling)
-plt.plot(times, rolling)
-plt.xlabel("t")
-plt.ylabel("$\\frac{z_{m+1}}{z_m}$")
-plt.savefig("./plots/2_5/peaks.png")
+
+currentPeaks = peakValues[:-1]
+nextPeaks = np.roll(peakValues, -1)[:-1]
+
+i = np.argmax(nextPeaks)
+c = currentPeaks[i]
+
+plt.figure()
+plt.plot([0, 50], [0, 50], 'c--')
+plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
+plt.plot([c, c], [0, 50], 'r--')
+plt.scatter(currentPeaks, nextPeaks, s=2)
+plt.figlegend(('_nolegend_', 'unity', '$z_m \\approx 38.5$', 'peaks'))
+plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
+plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
+plt.xlabel("$z_m$")
+plt.ylabel("$z_{m+1}$")
+# plt.savefig("./plots/2_5/peaks.png")
+
+currentPeaks = peakValues[:-2]
+nextPeaks = np.roll(peakValues, -2)[:-2]
+plt.figure()
+plt.plot([0, 50], [0, 50], 'c--')
+plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
+plt.plot([c, c], [0, 50], 'r--')
+plt.scatter(currentPeaks, nextPeaks, s=2)
+plt.figlegend(('_nolegend_', 'unity', '$z_m \\approx 38.5$', 'peaks'))
+plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
+plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
+plt.xlabel("$z_m$")
+plt.ylabel("$z_{m+2}$")
+plt.savefig("./plots/2_5/peaks2.png")
+
+currentPeaks = peakValues[:-3]
+nextPeaks = np.roll(peakValues, -3)[:-3]
+plt.figure()
+plt.plot([0, 50], [0, 50], 'c--')
+plt.plot([0, 50], [c*2, c*2 - 50], 'c--')
+plt.plot([c, c], [0, 50], 'r--')
+plt.scatter(currentPeaks, nextPeaks, s=2)
+plt.figlegend(('_nolegend_', 'unity', '$z_m \\approx 38.5$', 'peaks'))
+plt.xlim([-1 + np.amin(currentPeaks), 1 + np.amax(currentPeaks)])
+plt.ylim([-1 + np.amin(nextPeaks), np.amax(nextPeaks)+1])
+plt.xlabel("$z_m$")
+plt.ylabel("$z_{m+3}$")
+plt.savefig("./plots/2_5/peaks3.png")
