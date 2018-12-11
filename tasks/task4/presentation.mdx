@@ -1,0 +1,99 @@
+import { Tex, InlineTex } from "react-tex";
+export { default as theme } from "../theme";
+
+# SI1336 - Project 4
+
+## E. Weilow
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css"
+  integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML"
+  crossOrigin="anonymous"
+/>
+
+<style>
+  {`
+img {
+  max-width: 800px !important;
+}
+`}
+</style>
+
+---
+
+# Cellular automaton traffic model
+
+---
+
+## (4.1) Sample solutions
+
+![sim1](./plots/4_1/sim1.png)
+
+Probability of braking: **50%**.
+Density: **20%**.
+Road length: **50**.
+
+---
+
+## (4.2) Flow rate as function of density
+
+![sim1](./plots/4_2/density.png)
+
+Traffic jams start happening around a density of **30%**.
+
+---
+
+## (4.3) Effects of different maximum velocities
+
+![sim1](./plots/4_3/sim1.png)
+
+<p>
+  Can see that the flow rate for
+  <InlineTex texContent=" $$v_{max} = 2$$ " />
+  is about the same as for
+  <InlineTex texContent=" $$v_{max} = 5$$" />,
+  <br />
+  yet
+  <InlineTex texContent=" $$v_{max} = 5$$ " />
+  sees more abrupt stopping.
+</p>
+
+---
+
+## (4.4) Effects of different probability of braking
+
+![sim1](./plots/4_4/sim1.png)
+
+The lower the probability, the better traffic flows.
+
+tl;dr **STOP USING PHONES IN TRAFFIC =)**
+
+---
+
+# Forest fire model
+
+---
+
+## (4.5) Sample solution
+
+![sim1](./plots/4_5/sample.png)
+
+---
+
+## (4.5) N(s)
+
+![sim1](./plots/4_5/histogram.png)
+
+<p>
+  The size of tree clusters that burn seem to be quite proportional to
+  <InlineTex texContent=" $$N s^{-\alpha}$$ " />
+</p>
+
+---
+
+## (4.5) Variation of g and f
+
+![sim1](./plots/4_5/parameters.png)
+
+There seems to be a line around a growth probability of around 0.3 where alpha is greatest.

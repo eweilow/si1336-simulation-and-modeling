@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+\usepackage[cm]{fullpage}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{multicol}
+
+\setlength{\columnsep}{1cm}
+
+\title{S1336 - Project 4}
+\author{Erik Weilow}
+
+\newcommand{\triplefigure}[3]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#3}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\doublefigure}[2]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlefigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlewiderfigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.6\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
+
+\begin{document}
+\maketitle
+\newpage
+
+\section*{4.1}
+When looking at such a complex model (in the sense that any sort of error tends to break the results), it's nice to look at some sample solutions.
+We can find some in the following plot:
+\singlewiderfigure{./plots/4_1/sim1.png}
+Each vehicle is plotted as a unique color, so we can easily verify that they don't collide or run around each other.
+These simulations were run for a density $\rho = 20\%$ (10 vehicles on a road length of 50) with random starting positions, which is why the flow rate (that funnily turns out to be $Hz$) fluctuates slightly between simulations.
+
+\section*{4.2}
+This section sort of merged with 4.1, as I decided to plot density against flow rate for different road lengths in the same diagram.
+\singlewiderfigure{./plots/4_2/density.png}
+
+We can see that there's a clear dependence of road length up until at least a road length of around 50. There's also a clear point around $\rho \approx 30\%$ at which traffic jams start happening.
+
+\section*{4.3}
+In this section we're varying $v_{max}$ to see what effect it has on the behaviour of the vehicles.
+\singlewiderfigure{./plots/4_3/sim1.png}
+
+This plot was made using the probability of braking given for 4.1, $50\%$.
+We can see from the above plots that the flow rate doesn't necessarily increase beyond $0.3 Hz$, even with increased maximum velocity, but the vehicles start running into each other more with increased maximum velocity.
+
+\section*{4.4}
+In this section we're varying the probability of decelleration to see what effect it has on the behaviour of the vehicles.
+\singlewiderfigure{./plots/4_4/sim1.png}
+
+These plots was made using a maximum velocity $v_{max} = 2$. Here we see that a lower probability of random braking increases flow and flow rate.
+The conclusion one can draw from this is that one shouldn't be distracted when in traffic, since then we wouldn't have any traffic jams\footnote{One would also first need to prove that this simplified traffic model is a good representation of reality}
+
+It makes sense to get the results shown in the plots, as if no braking occurs, the cars would eventually reach some form of equilibrium velocities.
+
+\pagebreak
+
+\section*{4.5}
+We'll first look at a sample forest fire simulation (with a grid size of 8x8), where the squares in dark cyan are trees and the squares in yellow are trees on fire. 
+We can see that the simulation follows the rules.
+\singlewiderfigure{./plots/4_5/sample.png}
+
+\subsection*{N(s) for $g = f = 10\%$}
+Running 1000 simulation iterations on a grid size of 40x40 gives us the following histogram of sizes of the trees that are lit on fire in each iteration:
+\singlewiderfigure{./plots/4_5/histogram.png}
+The distribution seems to follow $N s^{-\alpha}$ quite well, with parameters $N \approx 18147$ and $\alpha \approx -1.61$ shown in the above figure acquired by fitting $N s^{-\alpha}$ to the histogram data.
+
+\subsection*{N(s) for many g, f}
+Every point in the two-dimensional interval $g \in [0.1, 0.5], f \in [0.1, 0.5]$ was averaged over around 14 simulations 
+to produce the following plot of $\alpha$, acquired by fitting $N s^{-\alpha}$ to the histogram of each simulation, as a function of $g$ and $f$.
+\singlewiderfigure{./plots/4_5/parameters.png}
+It seems counterintuitive that increased growth probability would result in a smaller $\alpha$, as then $N(s)$ would grow smaller much faster.
+One would think that higher growth would lead to larger clusters, so $\alpha$ should be smaller, but that's not the result that can be seen above.
+
+
+
+\end{document}
