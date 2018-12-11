@@ -44,5 +44,29 @@ int main()
       &guessPotential,
       NULL);
 
+  const double fromLogarithm = 5;
+  const double toLogarithm = 100;
+  const unsigned long steps = toLogarithm / fromLogarithm;
+
+  double *gridSizes = (double *)malloc(sizeof(double) * steps);
+  unsigned long *relaxations = (unsigned long *)malloc(sizeof(unsigned long) * steps);
+
+  for (unsigned long n = 0; n < steps; n++)
+  {
+    double logarithm = fromLogarithm + n * (toLogarithm - fromLogarithm) / (steps - 1);
+    unsigned long value = (unsigned long)logarithm;
+
+    gridSizes[n] = LINEAR_DIMENSION / (double)value;
+    relaxations[n] = runRelaxationsUntilAccuracy(NULL, LINEAR_DIMENSION, value, WANTED_ACCURACY_PERCENT / 100.0, &relax, &initialValue, &boundaryValue, &guessPotential, NULL);
+
+    printf("%f %d: %d\n", logarithm, value, relaxations[n]);
+  }
+
+  FILE *f = fopen("../../data/1010_a_relaxations.bin", "wb");
+  fwrite(&steps, sizeof(unsigned long), 1, f);
+  fwrite(gridSizes, sizeof(double), steps, f);
+  fwrite(relaxations, sizeof(unsigned long), steps, f);
+  fclose(f);
+
   return 0;
 }

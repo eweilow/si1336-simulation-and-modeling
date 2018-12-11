@@ -89,16 +89,20 @@ A guess is $V(x,y) = 10$. This is reasonable as all the boundaries are $V=10$ an
 For a small grid ($\Delta x = \Delta y = 5$), the center point would be instantly equal to 10.
 
 \subtask{How many iterations are necessary to achieve 1\% accuracy?}
-It takes about 56 relaxations to achieve 1\% accuracy, producing the shape seen in the below plot.
-\singlefigure{./plots/1010/a_1.png}
+It takes about 56 relaxations to achieve 1\% accuracy, producing the shape seen in the below plots.
+\doublefigure{./plots/1010/a_1.png}{./plots/1010/a_1_eq.png}
 
 \subtask{Decrease the grid size by a factor of two, and determine the number of iterations that are now necessary to achieve 1\% accuracy.}
 With a grid size $\Delta x = \Delta y = 0.5$, it takes instead closer to 225 relaxations to achieve the same accuracy. 
 \singlefigure{./plots/1010/a_2.png}
-For these two simple cases, we can see that the amount of relaxations could follow
+For these two simple cases, we can see that the amount of relaxations could potentially follow
 $$
-n_{relaxations} \propto \frac{1}{\Delta x \Delta y}
+n_{relaxations} \propto \frac{1}{\Delta x \Delta y} \propto \left( n_{gridpoints} \right)^2
 $$
+
+This can be shown via the following loglog diagram showing the necessary relaxations for different grid sizes,
+where the curve $0.56 n^2$ can be fit to the computed data.
+\singlefigure{./plots/1010/a_1_dependency.png}
 
 \task{b}{
   Consider the same geometry as in part (a), but set the initial potential at the interior sites
@@ -124,7 +128,7 @@ By these boundary conditions, we get a saddle as seen in the below figure (and e
 
 \subtask{What happens if the potential is 10 on three sides and 0 on the fourth?}
 Now we get a sort of rounded slope, that tends toward $V=0$ for $y = 0$.
-\singlefigure{./plots/1010/c_2.png}
+\doublefigure{./plots/1010/c_2.png}{./plots/1010/c_2_eq.png}
 
 \section*{10.11 Gauss-Seidel relaxation}
 \task{a}{

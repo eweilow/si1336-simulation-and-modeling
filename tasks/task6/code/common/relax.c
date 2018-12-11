@@ -10,9 +10,12 @@ void relax(struct Grid *grid)
   {
     for (unsigned long i = 1; i < grid->points - 1; ++i)
     {
+      double *add = curr[i - 1];
+      double *mid = curr[i];
+      double *sub = curr[i + 1];
       for (unsigned long j = 1; j < grid->points - 1; ++j)
       {
-        grid->nextGrid[i][j] = 0.25 * (curr[i - 1][j] + curr[i + 1][j] + curr[i][j - 1] + curr[i][j + 1]);
+        grid->nextGrid[i][j] = 0.25 * (sub[j] + add[j] + mid[j - 1] + mid[j + 1]);
       }
     }
   }
@@ -22,7 +25,7 @@ void relax(struct Grid *grid)
   copyNextIntoCurrentGrid(grid, grid->nextGrid, grid->currentGrid);
 }
 
-void runRelaxationsUntilAccuracy(
+unsigned long runRelaxationsUntilAccuracy(
     char *name,
     double linearDimension,
     unsigned long points,
@@ -38,7 +41,7 @@ void runRelaxationsUntilAccuracy(
   setBoundaryConditions(&grid, boundaryValue);
   computeAccuracy(&grid, guessPotential);
 
-  printGrid(&grid);
+  //printGrid(&grid);
 
   unsigned long steps = 0;
   while (grid.currentAccuracy > desiredAccuracy && (++steps) <= 1500000)
@@ -46,7 +49,7 @@ void runRelaxationsUntilAccuracy(
     relaxFn(&grid);
     computeAccuracy(&grid, guessPotential);
   }
-  printGrid(&grid);
+  //printGrid(&grid);
 
   if (name != NULL)
   {
@@ -61,4 +64,6 @@ void runRelaxationsUntilAccuracy(
   }
 
   freeGrid(&grid);
+
+  return grid.relaxations;
 }

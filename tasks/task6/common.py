@@ -1,6 +1,7 @@
 import struct
 import numpy as np
 import matplotlib
+import scipy.optimize as opt
 from mpl_toolkits import mplot3d
 from matplotlib import patheffects
 import matplotlib.pyplot as plt
@@ -18,6 +19,53 @@ def loadFile(filename):
                 p, = struct.unpack("d", f.read(struct.calcsize("d")))
                 data[x, y] = p
         return points, relaxations, accuracy, data
+
+
+def loadRelaxationsFile(filename):
+    with open(filename, "rb") as f:
+        points, = struct.unpack("L", f.read(struct.calcsize("L")))
+
+        gridSizes = np.zeros(points)
+        relaxations = np.zeros(points)
+
+        for x in range(0, points):
+            p, = struct.unpack("d", f.read(struct.calcsize("d")))
+            gridSizes[x] = p
+        for x in range(0, points):
+            p, = struct.unpack("L", f.read(struct.calcsize("L")))
+            relaxations[x] = p
+        return gridSizes, relaxations
+
+
+def optimizePlotRelaxations(gridPoints, relaxations):
+    def func(x, a, b):
+        return b * x**a
+
+    optimizedParameters, pcov = opt.curve_fit(
+        func, gridPoints, relaxations, method='lm', maxfev=10000)
+
+    return func, optimizedParameters
+
+
+def plotRelaxations(filename, gridSizes, relaxations):
+    plt.figure()
+    ax = plt.axes()
+    plt.xkcd()
+    matplotlib.rcParams['path.effects'] = [
+        patheffects.withStroke(linewidth=0, foreground='w')]
+    matplotlib.rcParams['legend.loc'] = "best"
+    gridPoints = 10/gridSizes
+
+    F, pars = optimizePlotRelaxations(gridPoints, relaxations)
+
+    ax.loglog(gridPoints, relaxations)
+    ax.loglog(gridPoints, F(gridPoints, pars[0], pars[1]), "--")
+    plt.title("Relaxations for different grid sizes")
+    plt.xlabel("Grid points (n)")
+    plt.ylabel("Relaxations necessary")
+    ax.legend(("Data from computations", "Fit curve (${1:.2f} n^{{{0:.2f}}})$".format(pars[0], pars[1])),
+              loc='best')
+    plt.savefig(filename, dpi=240, bbox_inches='tight')
 
 
 def plotData(
