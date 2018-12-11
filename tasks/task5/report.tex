@@ -1,0 +1,126 @@
+\documentclass[11pt]{article}
+\usepackage[cm]{fullpage}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[section]{placeins}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{multicol}
+
+\setlength{\columnsep}{1cm}
+
+\title{S1336 - Project 5}
+\author{Erik Weilow}
+
+\newcommand{\triplefigure}[3]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+  \begin{minipage}{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#3}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\doublefigure}[2]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#2}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlefigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
+\newcommand{\singlewiderfigure}[1]{
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.6\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{#1}
+  \end{minipage}
+\end{figure}
+}
+
+\begin{document}
+\maketitle
+\newpage
+
+\section*{5.1}
+
+We are to use the Metropolis method to calculate
+$$
+\langle x \rangle = \frac{\int_0^\infty{x e^{-x} dx}}{\int_0^\infty{e^{-x} dx}}
+$$
+for different values $\delta$ controlling the randomness of our algorithm. The first modification that has to be done is to create the modified distribution
+$$
+P(x) = H(x) e^{-x}
+$$
+where $H(x)$ is the Heaviside function. This lets us expand the integrals to the equivalent form
+$$
+\langle x \rangle = \frac{\int_{-\infty}^\infty{x H(x) e^{-x} dx}}{\int_{-\infty}^\infty{H(x)e^{-x} dx}}
+$$
+Otherwise the model statistically produces very few positive values of x and thus we fail to compute the desired $\langle x \rangle$.
+
+The following are plots for different choices of $\delta$
+\doublefigure{./plots/5_1/mean.png}{./plots/5_1/delta.png}
+
+It would seem that larger $\delta$ tends to be slightly better than smaller, but after 2 million generated points they are all very close in terms of $\Delta = \frac{\sigma}{N}$.
+
+We can also look at the difference to the theoretical answer, as well as the difference between $\Delta$ and $|\langle x \rangle - 1|$.
+\doublefigure{./plots/5_1/difference.png}{./plots/5_1/diff.png}
+
+This further shows that larger $\delta$ tends to be better, up to a point.
+
+\section*{5.2}
+\singlewiderfigure{./plots/5_2/acceptance.png}
+The above is a plot of the acceptance ratio versus step size. The acceptance ratio around 70 percent for step size of 0.1 and tends to 0 for step sizes between 1 and 10.
+
+
+\doublefigure{./plots/5_2/convergence.png}{./plots/5_2/cV.png}
+
+We see here that the convergence is $\langle E \rangle = -37.5$ and $cV = 10$ for a step size $>0.1$. Calling the region around $10^{-4}$ convergence would be weird, as $cV$ approaches 0. This seems to me ofysikaliskt.
+
+\section*{A note}
+\textit{For the remainder of this report, a step size of 0.1 was used.}
+
+\section*{5.3}
+I wanted to look into a more rigorous approach to the determination of collective behaviour, rather than just animating a single simulation for different temperatures.
+One such metric is the average distance between particles as shown in the following figure.
+\singlewiderfigure{./plots/5_3/acceptance.png}
+We can see that the particle distance seem to peak around a temperature of approximately $T\approx 1$. 
+
+The same simulation data is plotted on a narrower and linear temperature range in the following figure.
+\singlewiderfigure{./plots/5_3/small_range.png}
+
+An addition that also could be nice to look at is the average velocities for the particles.
+
+\section*{5.4}
+\doublefigure{./plots/5_4/energy.png}{./plots/5_4/heat.png}
+In the two above plots we can see total energy and the heat capacity of the 20 particle system as function of temperature.
+Energy seem to increase with temperature (reasonable) while heat capacity decreases (maybe reasonable?).
+It's clear from thermodynamics that increasing temperature should result in higher energy, but heat capacity decreasing is counterintuitive.
+My thinking is that this has to do with the average distance plot seen in the previous section. The density is lowest around $T=1$ and thus heat capacity is less?
+
+
+\end{document}
