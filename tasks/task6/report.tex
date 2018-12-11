@@ -158,19 +158,64 @@ while for the method in (a) the computed data trends above for small grids while
 \section*{10.26 The multigrid method}
 \task{a}{
   Write a program that implements the multigrid method using Gauss-Seidel relaxation on a checkerboard lattice. 
-  Test your program on a $4×4$ grid whose boundary sites are all equal to unity, and whose initial internal sites are set to zero.
+  Test your program on a 4x4 grid whose boundary sites are all equal to unity, and whose initial internal sites are set to zero.
 }
+\break
+\break
+While the results are fairly boring, here are some illustrative plots:
+\doublefigure{./plots/1026/a_baseline_1.png}{./plots/1026/a_multigrid_1.png}
+The result is that the rightmost plot, set up using the multigrid method, requires no further relaxation.
+It was run with a single relaxation step on each progressive prolongation up to a grid size of $2^4$, with no relaxation on the restrictions down to a grid size of $2^2$.
+In effect, we only need 4 relaxation steps to produce the rightmost grid,
+which really isn't comparable to the leftmost plot that requires 12 relaxations and still isn't close to the exact result.
+
+This effect is further amplified if we look at a larger grid ($2^6$):
+\doublefigure{./plots/1026/a_baseline_1_2.png}{./plots/1026/a_multigrid_1_2.png}
+In this case, the multigrid method was set up to run a single relaxation on each prolongation up to a grid size of $2^8$, with no relaxation on the restrictions down to a grid size of $2^6$.
+The result is 8 relaxations necessary to produce an \textit{exact} result, rather than 3067 relaxations to produce an approximate result.
+
 \task{b}{
   The exact solution for part (a) gives a potential of unity at each point.
 }
-\subtask{How many relaxation steps does it take to reach unity within 0.1\% at every site by simply using the $4×4$ grid?}
+\subtask{How many relaxation steps does it take to reach unity within 0.1\% at every site by simply using the 4x4 grid?}
+As answered in (a), it takes about 12 relaxation steps.
 \subtask{How many steps does it take if you use one coarse grid and continue until the coarse grid values are within 0.1\% of unity?}
+This one is interesting, because the course grid is a single point surrounded by our boundary conditions.
+On the first relaxation, it will be set to the average of the surrounding points ($V=1$), which results in the entire grid taking on unity.
+
 \subtask{Is it necessary to carry out any fine grid relaxation steps to reach the desired accuracy on the fine grid?}
+If we start with a grid size of 2x2, with a single non-boundary point in the middle, during all prolongations all the new points will take on the average of the neighbours (from the previous, smaller size).
+This means that only the first course grid needs a relaxation step, as subsequent finer grids will become unity\footnote{resistance is futile}.
+
 \subtask{Next start with the coarsest scale, which is just one site. How many relaxation steps does it take now?}
+In this case, no relaxation steps should be necessary, according to the same reasoning as above.
 
 \task{c}{
   Repeat part (b), but change the boundary so that one side of the boundary is held at a potential of 0.5.
 }
 \subtask{Experiment with different sequences of prolongation, restriction, and relaxation.}
+I decided that the boundary from this task is boring and defined my own boundary
+$$
+V_{boundary}(x,y) = 5 + cos(x) sin(y)
+$$
+with a grid spanning $x\in[0, 2\pi], y\in[0, 2\pi]$.
+
+The first sequence we can look at is one that does 5 relaxations on every prolongation, up to a grid size of $2^4$:
+\doublefigure{./plots/1026/a_baseline_2.png}{./plots/1026/a_multigrid_2.png}
+Here the multigrid method does a total of $54 + 5 \cdot 4 = 74$ relaxations and the simple iterative method does 192 relaxations, to produce the same accuracy.
+\break
+We can then look at a sequence that applies 5 relaxations on every prolongation, up to a grid size of $2^8$,
+and then applies 5 relaxations on every restriction down to a grid size of $2^4$:
+\doublefigure{./plots/1026/a_baseline_3.png}{./plots/1026/a_multigrid_3.png}
+Here the multigrid method does a total of $46 + 8 \cdot 4 + 4 \cdot 4 = 94$ relaxations, still less than 192.
+\break
+The final sequence is similar to the previous one, but one that doesn't relax the grid on restrictions:
+\doublefigure{./plots/1026/a_baseline_4.png}{./plots/1026/a_multigrid_4.png}
+Here the multigrid method does a total of $53 + 8 \cdot 4 = 85$ relaxations, still less than 192.
+It seems to be better not to apply relaxation when restricting the grid size, as the effect of that is to smooth the data rather than to just supersample it.
+
+All in all, the multigrid method seems to be much more effective than just the standard Gauss-Seidel relaxation.
+
+
 
 \end{document}
