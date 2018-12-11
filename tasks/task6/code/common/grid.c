@@ -111,7 +111,7 @@ double getAccuracy(double expected, double actual)
 
 void printGrid(struct Grid *grid)
 {
-  printf("\nAccuracy = %.4f%%, relaxations = %d\n", grid->currentAccuracy * 100.0, grid->relaxations);
+  printf("\nAccuracy = %.4f%%, relaxations = %d, p = %d\n", grid->currentAccuracy * 100.0, grid->relaxations, grid->points);
 
   if (grid->points > 23)
   {
