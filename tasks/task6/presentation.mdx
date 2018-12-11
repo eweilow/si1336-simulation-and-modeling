@@ -1,0 +1,223 @@
+import { Tex, InlineTex } from "react-tex";
+export { default as theme } from "../theme";
+
+# SI1336 - Project 6
+
+## E. Weilow
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.10.0-alpha/dist/katex.min.css"
+  integrity="sha384-BTL0nVi8DnMrNdMQZG1Ww6yasK9ZGnUxL1ZWukXQ7fygA1py52yPp9W4wrR00VML"
+  crossOrigin="anonymous"
+/>
+
+<style>
+  {`
+img {
+  max-width: 800px !important;
+}
+`}
+</style>
+
+---
+
+# 10.10 Numerical solution of the potential within a rectangular region
+
+---
+
+## (a) Solutions
+
+![plot](./plots/1010/a_1.png)
+
+![plot](./plots/1010/a_2.png)
+
+Left: grid size of 10.
+
+Right: grid size of 20.
+
+---
+
+## (a) Equipotential surface
+
+![plot](./plots/1010/a_1_eq.png)
+
+---
+
+## (a) Dependency on grid size
+
+![plot](./plots/1010/a_1_dependency.png)
+
+<p>
+  It appears to follow:
+  <br />
+  <br />
+  <InlineTex texContent="$$n_{relaxations} \propto \frac{1}{\Delta x \Delta y} \propto \left( n_{gridpoints} \right)^2$$" />
+</p>
+
+---
+
+## (b) Different initial conditions (center set to 4)
+
+![plot](./plots/1010/b_1.png)
+
+Evolves to the same thing, but slower (102 vs 56 relaxations).
+
+---
+
+## (c) Some sides 5, other sides 10
+
+![plot](./plots/1010/c_1.png)
+
+![plot](./plots/1010/c_1_eq.png)
+
+The general shape is a saddle.
+
+---
+
+## (c) One side 0, other sides 10
+
+![plot](./plots/1010/c_2.png)
+
+![plot](./plots/1010/c_2_eq.png)
+
+Gets a smoothed slope.
+
+---
+
+# 10.11 Gauss-Seidel relaxation
+
+---
+
+## (a) Sequential updates
+
+![plot](./plots/1011/a_1_eq.png)
+
+![plot](./plots/1011/a_1_dependency.png)
+
+Much better than first method (29 vs 56 relaxations).
+Much more distorted.
+
+---
+
+## (b) Checkered updates
+
+![plot](./plots/1011/b_1_eq.png)
+
+![plot](./plots/1011/b_1_dependency.png)
+
+About the same as sequential updates (28 vs 29 relaxations).
+Produces less distortion.
+
+---
+
+## Distortion comparison
+
+<div style={{ display: "flex", textAlign: "center" }}>
+  <div>
+    <img width={500} src="./plots/1010/a_1_eq.png" />
+    <p>Initial</p>
+  </div>
+  <div>
+    <img width={500} src="./plots/1011/a_1_eq.png" />
+    <p>Sequential</p>
+  </div>
+  <div>
+    <img width={500} src="./plots/1011/b_1_eq.png" />
+    <p>Checkered</p>
+  </div>
+</div>
+
+---
+
+## Relaxations necessary
+
+<div style={{ display: "flex", textAlign: "center" }}>
+  <div>
+    <img width={500} src="./plots/1010/a_1_dependency.png" />
+    <p>Initial</p>
+  </div>
+  <div>
+    <img width={500} src="./plots/1011/a_1_dependency.png" />
+    <p>Sequential</p>
+  </div>
+  <div>
+    <img width={500} src="./plots/1011/b_1_dependency.png" />
+    <p>Checkered</p>
+  </div>
+</div>
+
+---
+
+# 10.26 The multigrid method
+
+---
+
+## (a) 4x4 grid
+
+![plot](./plots/1026/a_baseline_1.png)
+
+![plot](./plots/1026/a_multigrid_1.png)
+
+4 relaxations run for right plot, 12 for left.
+
+---
+
+## (a) 64x64 grid
+
+![plot](./plots/1026/a_baseline_1_2.png)
+
+![plot](./plots/1026/a_multigrid_1_2.png)
+
+8 relaxations run for right plot, 3067 for left.
+
+---
+
+## (b)
+
+Essentially with the given boundary conditions, only a single relaxation is necessary.
+
+When grid is prolongated, new cells take on average from neighbours.
+If grid is initialized as 2x2 (single non-boundary cell), the first relaxation sets the center to unity.
+
+Subsequent prolongations make each new cell average of unity cells, resulting in unity.
+
+---
+
+## (c) Different boundary
+
+![plot](./plots/1026/a_exact_2.png)
+
+Felt this is more interesting to look at - requires more computation =)
+
+---
+
+![plot](./plots/1026/a_baseline_2.png)
+
+![plot](./plots/1026/a_multigrid_2.png)
+
+5 relaxations on each prolongation, up to grid size 16.
+
+74 vs 192 relaxations.
+
+---
+
+![plot](./plots/1026/a_baseline_3.png)
+
+![plot](./plots/1026/a_multigrid_3.png)
+
+5 relaxations on each prolongation, up to grid size 256.
+5 relaxations on each retraction down to grid size 16.
+
+94 vs 192 relaxations.
+
+---
+
+![plot](./plots/1026/a_baseline_4.png)
+
+![plot](./plots/1026/a_multigrid_4.png)
+
+5 relaxations on each prolongation, up to grid size 256.
+No relaxation on retractions.
+
+85 vs 192 relaxations.
