@@ -95,8 +95,6 @@ def plotData(
     realTitle=False,
     postfix=True
 ):
-    matplotlib.rcParams['path.effects'] = [
-        patheffects.withStroke(linewidth=0, foreground='w')]
 
     x, y = np.meshgrid(np.linspace(0, linearDimension, points),
                        np.linspace(0, linearDimension, points))
@@ -111,6 +109,8 @@ def plotData(
             title = realTitle
     plt.figure()
     plt.xkcd()
+    matplotlib.rcParams['path.effects'] = [
+        patheffects.withStroke(linewidth=0, foreground='w')]
     if use3d:
         ax = plt.axes(projection='3d')
         ax.set_title(title, pad=16)
